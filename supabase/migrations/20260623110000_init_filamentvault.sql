@@ -70,6 +70,8 @@ create table if not exists public.activity_log (
 
 create index if not exists profiles_full_name_idx on public.profiles (full_name);
 create index if not exists filament_rolls_buyer_id_idx on public.filament_rolls (buyer_id);
+create index if not exists filament_rolls_created_by_idx on public.filament_rolls (created_by);
+create index if not exists filament_rolls_updated_by_idx on public.filament_rolls (updated_by);
 create index if not exists filament_rolls_material_status_idx on public.filament_rolls (material, status);
 create index if not exists filament_usage_roll_id_idx on public.filament_usage (roll_id);
 create index if not exists filament_usage_user_id_idx on public.filament_usage (user_id);
@@ -199,6 +201,7 @@ $$;
 create or replace function public.apply_usage_delta()
 returns trigger
 language plpgsql
+security definer
 set search_path = public
 as $$
 declare
