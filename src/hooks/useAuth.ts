@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { Session } from '@supabase/supabase-js';
 import { demoProfiles } from '../lib/demoData';
-import { isSupabaseConfigured, supabase } from '../lib/supabase';
+import { getAppBaseUrl, isSupabaseConfigured, supabase } from '../lib/supabase';
 import { Profile } from '../types';
 
 type AuthState = {
@@ -116,6 +116,7 @@ export function useAuth(): AuthState {
       email,
       password,
       options: {
+        emailRedirectTo: getAppBaseUrl(),
         data: {
           full_name: fullName
         }
