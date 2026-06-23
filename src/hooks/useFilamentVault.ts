@@ -88,6 +88,11 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       return;
     }
 
+    if (!currentProfile) {
+      setLoading(true);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
@@ -122,7 +127,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
     setUsage((usageResult.data || []) as FilamentUsage[]);
     setActivity((activityResult.data || []) as ActivityLog[]);
     setLoading(false);
-  }, [isDemo]);
+  }, [currentProfile, isDemo]);
 
   useEffect(() => {
     refresh();

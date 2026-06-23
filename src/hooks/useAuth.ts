@@ -47,7 +47,16 @@ export function useAuth(): AuthState {
       return;
     }
 
-    setProfile(data);
+    setProfile(
+      data || {
+        id: userId,
+        email: email || null,
+        full_name: email || 'Profil',
+        avatar_url: null,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }
+    );
   }, []);
 
   useEffect(() => {
