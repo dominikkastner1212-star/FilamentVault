@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { demoActivity, demoPrinterStatus, demoPrinters, demoProfiles, demoRolls, demoUsage } from '../lib/demoData';
+import { loadDemoSnapshot, saveDemoSnapshot } from '../lib/demoStorage';
 import { supabase } from '../lib/supabase';
 import {
   ActivityLog,
@@ -94,27 +95,33 @@ function createActivity(
 }
 
 export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean): VaultState {
-  const [profiles, setProfiles] = useState<Profile[]>(demoProfiles);
-  const [rolls, setRolls] = useState<FilamentRoll[]>(attachRollRelations(demoRolls, demoProfiles));
-  const [usage, setUsage] = useState<FilamentUsage[]>(attachUsageRelations(demoUsage, demoRolls, demoProfiles));
-  const [printers, setPrinters] = useState<Printer[]>(demoPrinters);
-  const [printerStatus, setPrinterStatus] = useState<PrinterStatus[]>(
-    attachPrinterStatusRelations(demoPrinterStatus, demoPrinters)
+  const demoSnapshot = useMemo(() => (isDemo ? loadDemoSnapshot() : null), [isDemo]);
+  const [profiles, setProfiles] = useState<Profile[]>(demoSnapshot?.profiles || demoProfiles);
+  const [rolls, setRolls] = useState<FilamentRoll[]>(
+    demoSnapshot?.rolls || attachRollRelations(demoRolls, demoProfiles)
   );
-  const [activity, setActivity] = useState<ActivityLog[]>(attachActivityRelations(demoActivity, demoProfiles));
+  const [usage, setUsage] = useState<FilamentUsage[]>(
+    demoSnapshot?.usage || attachUsageRelations(demoUsage, demoRolls, demoProfiles)
+  );
+  const [printers, setPrinters] = useState<Printer[]>(demoSnapshot?.printers || demoPrinters);
+  const [printerStatus, setPrinterStatus] = useState<PrinterStatus[]>(
+    demoSnapshot?.printerStatus || attachPrinterStatusRelations(demoPrinterStatus, demoPrinters)
+  );
+  const [activity, setActivity] = useState<ActivityLog[]>(
+    demoSnapshot?.activity || attachActivityRelations(demoActivity, demoProfiles)
+  );
   const [loading, setLoading] = useState(!isDemo);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!isDemo) {
+      return;
+    }
+    saveDemoSnapshot({ profiles, rolls, usage, printers, printerStatus, activity });
+  }, [activity, isDemo, printerStatus, printers, profiles, rolls, usage]);
+
   const refresh = useCallback(async () => {
     if (isDemo || !supabase) {
-      setProfiles((existing) => (existing.length ? existing : demoProfiles));
-      setRolls((existing) => attachRollRelations(existing.length ? existing : demoRolls, demoProfiles));
-      setUsage((existing) => attachUsageRelations(existing.length ? existing : demoUsage, demoRolls, demoProfiles));
-      setPrinters((existing) => (existing.length ? existing : demoPrinters));
-      setPrinterStatus((existing) =>
-        attachPrinterStatusRelations(existing.length ? existing : demoPrinterStatus, demoPrinters)
-      );
-      setActivity((existing) => attachActivityRelations(existing.length ? existing : demoActivity, demoProfiles));
       setLoading(false);
       return;
     }

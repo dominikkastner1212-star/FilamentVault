@@ -5,6 +5,7 @@ import { FilamentRoll, MATERIALS, Profile, ROLL_STATUSES, RollFormValues } from 
 
 type RollFormModalProps = {
   roll?: FilamentRoll | null;
+  duplicateFrom?: FilamentRoll | null;
   profiles: Profile[];
   onClose: () => void;
   onSubmit: (values: RollFormValues) => Promise<void>;
@@ -12,25 +13,31 @@ type RollFormModalProps = {
 
 const today = new Date().toISOString().slice(0, 10);
 
-function initialValues(roll?: FilamentRoll | null, profiles: Profile[] = []): RollFormValues {
+function initialValues(
+  roll?: FilamentRoll | null,
+  profiles: Profile[] = [],
+  duplicateFrom?: FilamentRoll | null
+): RollFormValues {
+  const source = roll || duplicateFrom;
   return {
-    manufacturer: roll?.manufacturer || '',
-    material: roll?.material || 'PLA',
-    color: roll?.color || '',
-    original_weight_g: roll?.original_weight_g || 1000,
-    remaining_weight_g: roll?.remaining_weight_g ?? 1000,
-    purchase_date: roll?.purchase_date || today,
-    price: roll?.price || 0,
-    buyer_id: roll?.buyer_id || profiles[0]?.id || '',
-    storage_location: roll?.storage_location || '',
-    notes: roll?.notes || '',
-    status: roll?.status || 'aktiv'
+    manufacturer: source?.manufacturer || '',
+    material: source?.material || 'PLA',
+    color: source?.color || '',
+    original_weight_g: source?.original_weight_g || 1000,
+    remaining_weight_g: roll ? roll.remaining_weight_g ?? 1000 : source?.original_weight_g || 1000,
+    purchase_date: roll ? roll.purchase_date : today,
+    price: source?.price || 0,
+    buyer_id: source?.buyer_id || profiles[0]?.id || '',
+    storage_location: source?.storage_location || '',
+    notes: roll ? source?.notes || '' : '',
+    status: roll ? roll.status || 'aktiv' : 'aktiv'
   };
 }
 
 function validateRoll(values: RollFormValues) {
   const errors: string[] = [];
   if (!values.manufacturer.trim()) errors.push('Hersteller fehlt.');
+  if (!values.material.trim()) errors.push('Material fehlt.');
   if (!values.color.trim()) errors.push('Farbe fehlt.');
   if (!values.buyer_id) errors.push('Käufer fehlt.');
   if (!values.storage_location.trim()) errors.push('Lagerort fehlt.');
@@ -44,8 +51,8 @@ function validateRoll(values: RollFormValues) {
   return errors;
 }
 
-export function RollFormModal({ roll, profiles, onClose, onSubmit }: RollFormModalProps) {
-  const [values, setValues] = useState<RollFormValues>(() => initialValues(roll, profiles));
+export function RollFormModal({ roll, duplicateFrom, profiles, onClose, onSubmit }: RollFormModalProps) {
+  const [values, setValues] = useState<RollFormValues>(() => initialValues(roll, profiles, duplicateFrom));
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const pricePerGram = useMemo(
@@ -71,6 +78,7 @@ export function RollFormModal({ roll, profiles, onClose, onSubmit }: RollFormMod
       await onSubmit({
         ...values,
         manufacturer: values.manufacturer.trim(),
+        material: values.material.trim(),
         color: values.color.trim(),
         storage_location: values.storage_location.trim(),
         notes: values.notes.trim(),
@@ -86,8 +94,14 @@ export function RollFormModal({ roll, profiles, onClose, onSubmit }: RollFormMod
 
   return (
     <Modal
-      title={roll ? 'Rolle bearbeiten' : 'Rolle hinzufuegen'}
-      subtitle={roll ? 'Bestand, Status und Standort aktualisieren.' : 'Neue Filamentrolle für die Gruppe erfassen.'}
+      title={roll ? 'Rolle bearbeiten' : duplicateFrom ? 'Rolle kopieren' : 'Rolle hinzufuegen'}
+      subtitle={
+        roll
+          ? 'Bestand, Status und Standort aktualisieren.'
+          : duplicateFrom
+            ? 'Werte übernommen - Gewicht, Kaufdatum und Käufer prüfen.'
+            : 'Neue Filamentrolle für die Gruppe erfassen.'
+      }
       onClose={onClose}
       size="wide"
     >
@@ -107,13 +121,17 @@ export function RollFormModal({ roll, profiles, onClose, onSubmit }: RollFormMod
 
         <label>
           Material
-          <select value={values.material} onChange={(event) => update('material', event.target.value as RollFormValues['material'])}>
+          <input
+            value={values.material}
+            onChange={(event) => update('material', event.target.value)}
+            placeholder="z. B. PLA, PETG oder eigene Bezeichnung"
+            list="material-suggestions"
+          />
+          <datalist id="material-suggestions">
             {MATERIALS.map((material) => (
-              <option key={material} value={material}>
-                {material}
-              </option>
+              <option key={material} value={material} />
             ))}
-          </select>
+          </datalist>
         </label>
 
         <label>

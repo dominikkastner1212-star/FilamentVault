@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Edit3, MapPin, QrCode as QrIcon, Scale, Trash2 } from 'lucide-react';
+import { ArrowLeft, Copy, Edit3, MapPin, QrCode as QrIcon, Scale, Trash2 } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import { QrCode } from './QrCode';
 import { getAppBaseUrl } from '../lib/supabase';
@@ -10,6 +10,7 @@ type RollDetailPageProps = {
   rolls: FilamentRoll[];
   usage: FilamentUsage[];
   onEdit: (roll: FilamentRoll) => void;
+  onDuplicate: (roll: FilamentRoll) => void;
   onAddUsage: (rollId: string) => void;
   onDelete: (roll: FilamentRoll) => Promise<boolean> | boolean;
 };
@@ -25,7 +26,7 @@ function statusClass(roll: FilamentRoll) {
   return statusLabel(roll).toLowerCase();
 }
 
-export function RollDetailPage({ rolls, usage, onEdit, onAddUsage, onDelete }: RollDetailPageProps) {
+export function RollDetailPage({ rolls, usage, onEdit, onDuplicate, onAddUsage, onDelete }: RollDetailPageProps) {
   const { rollId } = useParams();
   const navigate = useNavigate();
   const roll = rolls.find((item) => item.id === rollId);
@@ -79,6 +80,10 @@ export function RollDetailPage({ rolls, usage, onEdit, onAddUsage, onDelete }: R
               <button type="button" className="secondary-button" onClick={() => onEdit(roll)}>
                 <Edit3 size={17} />
                 Bearbeiten
+              </button>
+              <button type="button" className="secondary-button" onClick={() => onDuplicate(roll)}>
+                <Copy size={17} />
+                Kopieren
               </button>
               <button type="button" className="ghost-button danger" onClick={deleteAndReturn}>
                 <Trash2 size={17} />

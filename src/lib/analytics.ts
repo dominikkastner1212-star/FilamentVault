@@ -1,4 +1,4 @@
-import { FilamentRoll, FilamentUsage, MATERIALS, MaterialStock, Profile, SettlementRow } from '../types';
+import { FilamentRoll, FilamentUsage, MaterialStock, Profile, SettlementRow } from '../types';
 
 export function usageCost(usage: FilamentUsage) {
   if (Number.isFinite(usage.cost_eur) && usage.cost_eur > 0) {
@@ -13,7 +13,8 @@ export function usageCost(usage: FilamentUsage) {
 }
 
 export function materialStock(rolls: FilamentRoll[]): MaterialStock[] {
-  return MATERIALS.map((material) => {
+  const materials = Array.from(new Set(rolls.map((roll) => roll.material))).sort((a, b) => a.localeCompare(b));
+  return materials.map((material) => {
     const matching = rolls.filter((roll) => roll.material === material && roll.status !== 'leer');
     return {
       material,

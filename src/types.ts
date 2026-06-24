@@ -3,7 +3,7 @@ export const ROLL_STATUSES = ['aktiv', 'reserviert', 'leer'] as const;
 export const APP_ROLES = ['admin', 'member'] as const;
 export const PRINTER_PROVIDERS = ['bambu_cloud', 'lan_bridge', 'manual'] as const;
 
-export type Material = (typeof MATERIALS)[number];
+export type Material = string;
 export type RollStatus = (typeof ROLL_STATUSES)[number];
 export type AppRole = (typeof APP_ROLES)[number];
 export type PrinterProvider = (typeof PRINTER_PROVIDERS)[number];

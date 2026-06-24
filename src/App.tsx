@@ -47,7 +47,9 @@ export default function App() {
   const auth = useAuth();
   const vault = useFilamentVault(auth.profile, auth.isDemo);
   const currentProfile = vault.profiles.find((profile) => profile.id === auth.profile?.id) || auth.profile;
-  const [rollModal, setRollModal] = useState<{ roll: FilamentRoll | null } | null>(null);
+  const [rollModal, setRollModal] = useState<{ roll: FilamentRoll | null; duplicateFrom?: FilamentRoll | null } | null>(
+    null
+  );
   const [usageRollId, setUsageRollId] = useState<string | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
 
@@ -114,6 +116,10 @@ export default function App() {
     }
   }
 
+  function duplicateRoll(roll: FilamentRoll) {
+    setRollModal({ roll: null, duplicateFrom: roll });
+  }
+
   async function markRollEmpty(roll: FilamentRoll) {
     await vault.markRollEmpty(roll);
     showToast('Rolle geleert', `${roll.manufacturer} ${roll.color} steht jetzt auf leer.`);
@@ -154,6 +160,7 @@ export default function App() {
                 rolls={vault.rolls}
                 usage={vault.usage}
                 onEdit={(roll) => setRollModal({ roll })}
+                onDuplicate={duplicateRoll}
                 onMarkEmpty={markRollEmpty}
                 onDelete={deleteRoll}
                 onAddUsage={openUsage}
@@ -167,6 +174,7 @@ export default function App() {
                 rolls={vault.rolls}
                 usage={vault.usage}
                 onEdit={(roll) => setRollModal({ roll })}
+                onDuplicate={duplicateRoll}
                 onAddUsage={openUsage}
                 onDelete={deleteRoll}
               />
@@ -197,6 +205,7 @@ export default function App() {
       {rollModal ? (
         <RollFormModal
           roll={rollModal.roll}
+          duplicateFrom={rollModal.duplicateFrom}
           profiles={vault.profiles}
           onClose={() => setRollModal(null)}
           onSubmit={submitRoll}

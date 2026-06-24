@@ -1,14 +1,15 @@
 import { Link } from 'react-router-dom';
-import { Edit3, QrCode, Search, Scale, Trash2, Weight } from 'lucide-react';
+import { Copy, Edit3, QrCode, Search, Scale, Trash2, Weight } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { displayName, formatCurrency, formatDate, formatGrams } from '../lib/format';
-import { FilamentRoll, FilamentUsage, MATERIALS } from '../types';
+import { FilamentRoll, FilamentUsage } from '../types';
 
 type RollsPageProps = {
   rolls: FilamentRoll[];
   usage: FilamentUsage[];
   onEdit: (roll: FilamentRoll) => void;
+  onDuplicate: (roll: FilamentRoll) => void;
   onMarkEmpty: (roll: FilamentRoll) => void;
   onDelete: (roll: FilamentRoll) => Promise<boolean> | boolean;
   onAddUsage: (rollId?: string) => void;
@@ -37,11 +38,15 @@ function remainingPercent(roll: FilamentRoll) {
   return Math.max(0, Math.min(100, (roll.remaining_weight_g / roll.original_weight_g) * 100));
 }
 
-export function RollsPage({ rolls, usage, onEdit, onMarkEmpty, onDelete, onAddUsage }: RollsPageProps) {
+export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDelete, onAddUsage }: RollsPageProps) {
   const [query, setQuery] = useState('');
   const [material, setMaterial] = useState('alle');
   const [status, setStatus] = useState('alle');
   const [selectedRollId, setSelectedRollId] = useState<string | null>(rolls[0]?.id || null);
+
+  const availableMaterials = useMemo(() => {
+    return Array.from(new Set(rolls.map((roll) => roll.material))).sort((a, b) => a.localeCompare(b));
+  }, [rolls]);
 
   const usageByRoll = useMemo(() => {
     const map = new Map<string, FilamentUsage[]>();
@@ -99,7 +104,7 @@ export function RollsPage({ rolls, usage, onEdit, onMarkEmpty, onDelete, onAddUs
           <button type="button" className={material === 'alle' ? 'filter-chip active' : 'filter-chip'} onClick={() => setMaterial('alle')}>
             Alle
           </button>
-          {MATERIALS.map((item) => (
+          {availableMaterials.map((item) => (
             <button
               type="button"
               value={item}
@@ -203,6 +208,10 @@ export function RollsPage({ rolls, usage, onEdit, onMarkEmpty, onDelete, onAddUs
                 <Edit3 size={17} />
                 Bearbeiten
               </button>
+              <button type="button" className="secondary-button" onClick={() => onDuplicate(selectedRoll)}>
+                <Copy size={17} />
+                Kopieren
+              </button>
               <Link to={`/rolls/${selectedRoll.id}`} className="secondary-button">
                 <QrCode size={17} />
                 QR
@@ -261,6 +270,10 @@ export function RollsPage({ rolls, usage, onEdit, onMarkEmpty, onDelete, onAddUs
               <button type="button" className="secondary-button compact" onClick={() => onEdit(roll)}>
                 <Edit3 size={15} />
                 Edit
+              </button>
+              <button type="button" className="secondary-button compact" onClick={() => onDuplicate(roll)}>
+                <Copy size={15} />
+                Kopieren
               </button>
               <Link to={`/rolls/${roll.id}`} className="secondary-button compact">
                 <QrCode size={15} />
