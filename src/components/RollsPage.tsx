@@ -10,7 +10,7 @@ type RollsPageProps = {
   usage: FilamentUsage[];
   onEdit: (roll: FilamentRoll) => void;
   onMarkEmpty: (roll: FilamentRoll) => void;
-  onDelete: (roll: FilamentRoll) => void;
+  onDelete: (roll: FilamentRoll) => Promise<boolean> | boolean;
   onAddUsage: (rollId?: string) => void;
 };
 

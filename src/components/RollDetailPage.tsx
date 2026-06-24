@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Edit3, MapPin, QrCode as QrIcon, Scale, Trash2 } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import { QrCode } from './QrCode';
@@ -11,7 +11,7 @@ type RollDetailPageProps = {
   usage: FilamentUsage[];
   onEdit: (roll: FilamentRoll) => void;
   onAddUsage: (rollId: string) => void;
-  onDelete: (roll: FilamentRoll) => void;
+  onDelete: (roll: FilamentRoll) => Promise<boolean> | boolean;
 };
 
 function statusLabel(roll: FilamentRoll) {
@@ -27,6 +27,7 @@ function statusClass(roll: FilamentRoll) {
 
 export function RollDetailPage({ rolls, usage, onEdit, onAddUsage, onDelete }: RollDetailPageProps) {
   const { rollId } = useParams();
+  const navigate = useNavigate();
   const roll = rolls.find((item) => item.id === rollId);
 
   if (!roll) {
@@ -41,11 +42,19 @@ export function RollDetailPage({ rolls, usage, onEdit, onAddUsage, onDelete }: R
     );
   }
 
-  const rollUsage = usage.filter((entry) => entry.roll_id === roll.id);
-  const detailUrl = `${getAppBaseUrl().replace(/\/$/, '')}/rolls/${roll.id}`;
-  const used = roll.original_weight_g - roll.remaining_weight_g;
-  const fill = Math.max(0, Math.min(100, (roll.remaining_weight_g / roll.original_weight_g) * 100));
+  const activeRoll = roll;
+  const rollUsage = usage.filter((entry) => entry.roll_id === activeRoll.id);
+  const detailUrl = `${getAppBaseUrl().replace(/\/$/, '')}/rolls/${activeRoll.id}`;
+  const used = activeRoll.original_weight_g - activeRoll.remaining_weight_g;
+  const fill = Math.max(0, Math.min(100, (activeRoll.remaining_weight_g / activeRoll.original_weight_g) * 100));
   const usageCost = rollUsage.reduce((sum, entry) => sum + entry.cost_eur, 0);
+
+  async function deleteAndReturn() {
+    const deleted = await onDelete(activeRoll);
+    if (deleted) {
+      navigate('/rolls', { replace: true });
+    }
+  }
 
   return (
     <section className="detail-layout detail-profile-layout">
@@ -71,7 +80,7 @@ export function RollDetailPage({ rolls, usage, onEdit, onAddUsage, onDelete }: R
                 <Edit3 size={17} />
                 Bearbeiten
               </button>
-              <button type="button" className="ghost-button danger" onClick={() => onDelete(roll)}>
+              <button type="button" className="ghost-button danger" onClick={deleteAndReturn}>
                 <Trash2 size={17} />
                 Löschen
               </button>

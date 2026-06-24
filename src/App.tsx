@@ -97,9 +97,20 @@ export default function App() {
 
   async function deleteRoll(roll: FilamentRoll) {
     const confirmed = window.confirm(`${roll.manufacturer} ${roll.material} ${roll.color} löschen?`);
-    if (confirmed) {
+    if (!confirmed) {
+      return false;
+    }
+
+    try {
       await vault.deleteRoll(roll);
       showToast('Rolle gelöscht', `${roll.manufacturer} ${roll.color} wurde entfernt.`);
+      return true;
+    } catch (deleteError) {
+      showToast(
+        'Rolle nicht gelöscht',
+        deleteError instanceof Error ? deleteError.message : 'Bitte versuche es erneut.'
+      );
+      return false;
     }
   }
 
