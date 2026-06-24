@@ -4435,3 +4435,97 @@ input[type='range'] {
   border: none;
   box-shadow: inset 3px 3px 8px rgba(190, 175, 165, 0.22), inset -3px -3px 8px rgba(255, 255, 255, 0.8);
 }
+
+/* ---- Pastel theme: cleanup of leftover legacy colors + a less generic feel ---- */
+.pastel-mock {
+  --pm-display: 'Fraunces', Georgia, serif;
+}
+
+.pastel-mock h1,
+.pastel-mock h2,
+.pastel-mock .cockpit-hero h2,
+.pastel-mock .stat-card strong,
+.pastel-mock .shader-card > strong,
+.pastel-mock .material-donut strong,
+.pastel-mock .remaining-ring strong {
+  font-family: var(--pm-display);
+  font-weight: 620;
+  letter-spacing: -0.01em;
+}
+
+.pastel-mock .primary-button::after,
+.pastel-mock .secondary-button::after,
+.pastel-mock .ghost-button::after,
+.pastel-mock .danger-button::after,
+.pastel-mock .icon-button::after {
+  display: none;
+}
+
+.pastel-mock .brand-mark {
+  background: linear-gradient(135deg, var(--pm-accent, #f3a6b0), var(--pm-accent-strong, #e8818f));
+  box-shadow: none;
+}
+
+.pastel-mock .brand-mark::after {
+  display: none;
+}
+
+.pastel-mock .stat-icon,
+.pastel-mock .icon-badge {
+  background: #fdebee;
+  color: var(--pm-accent-strong, #e8818f);
+}
+
+.pastel-mock .stat-icon::before,
+.pastel-mock .icon-badge::before {
+  display: none;
+}
+
+.pastel-mock .material-donut,
+.pastel-mock .remaining-ring {
+  --mat-pla: #f3a6b0;
+  --mat-plaplus: #b9a6e8;
+  --mat-petg: #8fc7d6;
+  --mat-asa: #f0c98d;
+  --mat-tpu: #a6d8b8;
+  --mat-abs: #c9bfae;
+}
+
+.pastel-mock .material-donut::before {
+  display: none;
+}
+
+.pastel-mock .shader-card {
+  color: var(--pm-ink, #3f3a4a);
+  background: linear-gradient(155deg, #fdebee, #fdf3ec);
+  box-shadow:
+    8px 8px 22px rgba(190, 175, 165, 0.3),
+    -8px -8px 22px rgba(255, 255, 255, 0.9);
+}
+
+.pastel-mock .shader-card::before {
+  display: none;
+}
+
+.pastel-mock .shader-card > span,
+.pastel-mock .shader-card > small {
+  color: var(--pm-muted, #948ba0);
+}
+
+.pastel-mock .shader-card > strong {
+  color: var(--pm-accent-strong, #e8818f);
+}
+
+.pastel-mock .price-spool {
+  background: linear-gradient(135deg, var(--pm-accent, #f3a6b0), var(--pm-accent-strong, #e8818f));
+  box-shadow: none;
+}
+
+.pastel-mock .price-spool::after {
+  border-color: rgba(255, 255, 255, 0.5);
+}
+
+.pastel-mock .mobile-nav-link.active {
+  background: linear-gradient(135deg, var(--pm-accent, #f3a6b0), var(--pm-accent-strong, #e8818f));
+  box-shadow: 0 16px 32px rgba(232, 129, 143, 0.3);
+}
