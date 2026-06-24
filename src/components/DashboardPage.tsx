@@ -88,7 +88,7 @@ export function DashboardPage({ profiles, rolls, usage, activity, onAddUsage }: 
   const settlementLead = settlement[0];
 
   return (
-    <div className="page-grid dashboard-cockpit">
+    <div className="page-grid dashboard-cockpit pastel-mock">
       <section className="cockpit-hero span-12">
         <div>
           <span className="eyebrow">Live Vault</span>
