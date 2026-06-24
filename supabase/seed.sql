@@ -183,15 +183,16 @@ on conflict (provider_id, provider) do update
 set identity_data = excluded.identity_data,
     updated_at = now();
 
-insert into public.profiles (id, email, full_name)
+insert into public.profiles (id, email, full_name, role)
 values
-  ('11111111-1111-4111-8111-111111111111', 'mia@example.com', 'Mia Schaefer'),
-  ('22222222-2222-4222-8222-222222222222', 'jonas@example.com', 'Jonas Weber'),
-  ('33333333-3333-4333-8333-333333333333', 'lena@example.com', 'Lena Braun'),
-  ('44444444-4444-4444-8444-444444444444', 'omar@example.com', 'Omar Haddad')
+  ('11111111-1111-4111-8111-111111111111', 'mia@example.com', 'Mia Schaefer', 'admin'),
+  ('22222222-2222-4222-8222-222222222222', 'jonas@example.com', 'Jonas Weber', 'member'),
+  ('33333333-3333-4333-8333-333333333333', 'lena@example.com', 'Lena Braun', 'member'),
+  ('44444444-4444-4444-8444-444444444444', 'omar@example.com', 'Omar Haddad', 'member')
 on conflict (id) do update
 set email = excluded.email,
     full_name = excluded.full_name,
+    role = excluded.role,
     updated_at = now();
 
 delete from public.filament_usage

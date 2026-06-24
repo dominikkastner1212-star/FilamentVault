@@ -10,6 +10,7 @@ export const demoProfiles: Profile[] = [
     email: 'mia@example.com',
     full_name: 'Mia Schaefer',
     avatar_url: null,
+    role: 'admin',
     created_at: iso(60),
     updated_at: iso(3)
   },
@@ -18,6 +19,7 @@ export const demoProfiles: Profile[] = [
     email: 'jonas@example.com',
     full_name: 'Jonas Weber',
     avatar_url: null,
+    role: 'member',
     created_at: iso(58),
     updated_at: iso(4)
   },
@@ -26,6 +28,7 @@ export const demoProfiles: Profile[] = [
     email: 'lena@example.com',
     full_name: 'Lena Braun',
     avatar_url: null,
+    role: 'member',
     created_at: iso(50),
     updated_at: iso(2)
   },
@@ -34,6 +37,7 @@ export const demoProfiles: Profile[] = [
     email: 'omar@example.com',
     full_name: 'Omar Haddad',
     avatar_url: null,
+    role: 'member',
     created_at: iso(45),
     updated_at: iso(5)
   }

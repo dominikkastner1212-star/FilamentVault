@@ -9,6 +9,8 @@ FilamentVault ist eine mobile-first PWA fuer die gemeinsame Filamentverwaltung e
 - Rollenverwaltung mit Hersteller, Material, Farbe, Gewicht, Preis, Kaeufer, Lagerort, Notizen und Status
 - Verbrauchserfassung mit automatischer Restgewichtsreduktion
 - Kostenuebersicht pro Person inklusive Ausgleichsbetrag
+- Druckauftrag-Kalkulator fuer Verkaufspreise mit Material, Maschinenzeit, Energie, Arbeit, Marge und MwSt.
+- Benutzerrollen: `admin` und `member`, inklusive Admin-Seite zur Rollenverwaltung
 - QR-Code pro Rolle, der direkt zur Detailseite fuehrt
 - Warnsystem ab unter 150 g und automatischer Status `leer` bei 0 g
 - PWA Manifest, Service Worker und App-Icons
@@ -87,10 +89,16 @@ Die Migration erstellt:
 - `filament_rolls`
 - `filament_usage`
 - `activity_log`
-- Enum-Typen fuer Material und Rollenstatus
+- Enum-Typen fuer Material, Rollenstatus und App-Rollen
 - Trigger fuer `updated_at`, Profilanlage, Kostenberechnung, Restgewicht, Leerstatus und Aktivitaetslog
 - Explizite Data-API-Grants fuer `authenticated`
-- RLS-Policies: eingeloggte Nutzer lesen alle Daten; nur eingeloggte Nutzer schreiben Rollen, Verbraeuche und eigene Profile
+- RLS-Policies: eingeloggte Nutzer lesen alle Daten; nur eingeloggte Nutzer schreiben Rollen und Verbraeuche; nur Admins duerfen Benutzerrollen aendern
+
+## Benutzerrollen
+
+Neue Nutzer starten als `member`. Ein `admin` sieht den Admin-Bereich in der Navigation und kann dort andere Profile auf `admin` oder `member` setzen. Rollen werden in `profiles.role` gespeichert, nicht in user-editierbaren Auth-Metadaten.
+
+Wichtig: Mindestens ein Admin sollte erhalten bleiben. Die Migration verhindert, dass der letzte Admin entfernt wird.
 
 ## Build
 

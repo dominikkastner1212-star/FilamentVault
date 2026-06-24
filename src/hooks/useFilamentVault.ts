@@ -3,6 +3,7 @@ import { demoActivity, demoProfiles, demoRolls, demoUsage } from '../lib/demoDat
 import { supabase } from '../lib/supabase';
 import {
   ActivityLog,
+  AppRole,
   FilamentRoll,
   FilamentUsage,
   Profile,
@@ -23,6 +24,7 @@ type VaultState = {
   markRollEmpty: (roll: FilamentRoll) => Promise<void>;
   deleteRoll: (roll: FilamentRoll) => Promise<void>;
   addUsage: (values: UsageFormValues) => Promise<void>;
+  updateProfileRole: (profileId: string, role: AppRole) => Promise<void>;
 };
 
 function sortByCreatedAt<T extends { created_at: string }>(items: T[]) {
@@ -49,6 +51,13 @@ function attachActivityRelations(activity: ActivityLog[], profiles: Profile[]) {
     ...entry,
     actor: entry.actor || profiles.find((profile) => profile.id === entry.actor_id) || null
   }));
+}
+
+function normalizeProfile(profile: Profile): Profile {
+  return {
+    ...profile,
+    role: profile.role || 'member'
+  };
 }
 
 function createActivity(
@@ -122,7 +131,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       return;
     }
 
-    setProfiles((profilesResult.data || []) as Profile[]);
+    setProfiles(((profilesResult.data || []) as Profile[]).map(normalizeProfile));
     setRolls((rollsResult.data || []) as FilamentRoll[]);
     setUsage((usageResult.data || []) as FilamentUsage[]);
     setActivity((activityResult.data || []) as ActivityLog[]);
@@ -351,6 +360,45 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
     [currentProfile, isDemo, refresh, rolls]
   );
 
+  const updateProfileRole = useCallback(
+    async (profileId: string, role: AppRole) => {
+      if (!currentProfile) {
+        throw new Error('Kein Benutzer aktiv.');
+      }
+
+      if (currentProfile.role !== 'admin') {
+        throw new Error('Nur Admins dürfen Rollen ändern.');
+      }
+
+      if (isDemo || !supabase) {
+        const target = profiles.find((profile) => profile.id === profileId);
+        setProfiles((items) =>
+          items.map((profile) =>
+            profile.id === profileId ? { ...profile, role, updated_at: new Date().toISOString() } : profile
+          )
+        );
+        setActivity((items) => [
+          createActivity(currentProfile, 'profile_role_updated', 'profile', profileId, {
+            profile: target?.full_name || target?.email || 'Profil',
+            old_role: target?.role,
+            new_role: role
+          }),
+          ...items
+        ]);
+        return;
+      }
+
+      const { error: updateError } = await supabase.from('profiles').update({ role }).eq('id', profileId);
+
+      if (updateError) {
+        throw new Error(updateError.message);
+      }
+
+      await refresh();
+    },
+    [currentProfile, isDemo, profiles, refresh]
+  );
+
   return useMemo(
     () => ({
       profiles,
@@ -364,8 +412,23 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       updateRoll,
       markRollEmpty,
       deleteRoll,
-      addUsage
+      addUsage,
+      updateProfileRole
     }),
-    [activity, addRoll, addUsage, deleteRoll, error, loading, markRollEmpty, profiles, refresh, rolls, updateRoll, usage]
+    [
+      activity,
+      addRoll,
+      addUsage,
+      deleteRoll,
+      error,
+      loading,
+      markRollEmpty,
+      profiles,
+      refresh,
+      rolls,
+      updateProfileRole,
+      updateRoll,
+      usage
+    ]
   );
 }

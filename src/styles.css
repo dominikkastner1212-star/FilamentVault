@@ -341,6 +341,29 @@ button:disabled {
   color: rgba(234, 240, 238, 0.58);
 }
 
+.profile-role-chip {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  margin-top: 7px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 780;
+}
+
+.role-admin {
+  color: #c7fff2;
+  background: rgba(47, 159, 143, 0.2);
+}
+
+.role-member {
+  color: rgba(234, 240, 238, 0.78);
+  background: rgba(255, 255, 255, 0.08);
+}
+
 .workspace {
   min-width: 0;
   padding: 24px 28px 48px;
@@ -2604,6 +2627,239 @@ input[type='range'] {
   white-space: pre-wrap;
 }
 
+.admin-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
+  gap: 22px;
+  align-items: center;
+  padding: clamp(20px, 4vw, 30px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 86% 12%, rgba(47, 159, 143, 0.2), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(245, 249, 248, 0.9));
+  box-shadow: var(--shadow);
+  animation: vault-rise var(--motion-spring) both;
+}
+
+.admin-hero h2 {
+  max-width: 720px;
+  margin: 12px 0 0;
+  color: var(--ink);
+  font-size: clamp(2rem, 4vw, 4rem);
+  line-height: 0.98;
+}
+
+.admin-hero p {
+  max-width: 620px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.admin-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-summary-grid > div {
+  min-height: 130px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid rgba(16, 20, 23, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 18px 46px rgba(16, 20, 23, 0.08);
+}
+
+.admin-summary-grid svg {
+  color: var(--accent-strong);
+}
+
+.admin-summary-grid strong {
+  color: var(--ink);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.admin-summary-grid span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.admin-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+  gap: 18px;
+  align-items: start;
+}
+
+.admin-users-panel {
+  padding: 0;
+}
+
+.admin-user-list {
+  display: grid;
+  gap: 0;
+}
+
+.admin-user-card {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) minmax(170px, 220px);
+  gap: 14px;
+  align-items: center;
+  padding: 16px 18px;
+  border-top: 1px solid var(--line);
+}
+
+.admin-user-card:first-child {
+  border-top: 0;
+}
+
+.admin-avatar {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  color: var(--ink);
+  background: #dfe7e4;
+  font-weight: 780;
+}
+
+.admin-user-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+}
+
+.admin-user-title strong {
+  color: var(--ink);
+}
+
+.admin-user-title em {
+  min-height: 22px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  color: var(--accent-strong);
+  background: #e4f4ef;
+  font-size: 0.68rem;
+  font-style: normal;
+  font-weight: 780;
+}
+
+.admin-user-card small,
+.admin-user-card p {
+  color: var(--muted);
+}
+
+.admin-user-card small {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.76rem;
+  font-weight: 720;
+}
+
+.admin-user-card p {
+  margin: 8px 0 0;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.role-control {
+  display: grid;
+  gap: 8px;
+}
+
+.role-pill {
+  width: fit-content;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 790;
+}
+
+.role-pill.role-admin {
+  color: #0d6259;
+  background: #dff7f0;
+}
+
+.role-pill.role-member {
+  color: #526065;
+  background: #eef3f1;
+}
+
+.admin-side {
+  position: sticky;
+  top: 22px;
+  display: grid;
+  gap: 16px;
+}
+
+.permission-list,
+.admin-activity-list {
+  display: grid;
+  gap: 10px;
+}
+
+.permission-list > div,
+.admin-activity-list > div:not(.empty-state) {
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.permission-list strong,
+.admin-activity-list strong {
+  display: block;
+  color: var(--ink);
+}
+
+.permission-list span,
+.admin-activity-list span,
+.admin-activity-list small {
+  display: block;
+  margin-top: 5px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  line-height: 1.38;
+}
+
+.access-denied-panel {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+
+.access-denied-panel svg {
+  color: var(--accent-strong);
+}
+
+.access-denied-panel h2 {
+  margin: 0;
+  color: var(--ink);
+}
+
+.access-denied-panel p {
+  margin: 6px 0 0;
+  color: var(--muted);
+}
+
 .mobile-nav {
   display: none;
 }
@@ -2639,11 +2895,14 @@ input[type='range'] {
   }
 
   .calculator-hero,
-  .calculator-layout {
+  .calculator-layout,
+  .admin-hero,
+  .admin-layout {
     grid-template-columns: 1fr;
   }
 
-  .calculator-results {
+  .calculator-results,
+  .admin-side {
     position: static;
   }
 
@@ -2877,6 +3136,16 @@ input[type='range'] {
     width: 116px;
   }
 
+  .admin-user-card {
+    grid-template-columns: 44px minmax(0, 1fr);
+  }
+
+  .role-control {
+    grid-column: 2;
+    grid-template-columns: auto minmax(160px, 1fr);
+    align-items: center;
+  }
+
   .material-row {
     grid-template-columns: 98px 1fr 72px;
   }
@@ -3042,8 +3311,25 @@ input[type='range'] {
     padding: 16px;
   }
 
+  .admin-hero {
+    padding: 16px;
+  }
+
   .calculator-hero h2 {
     font-size: 2.22rem;
+  }
+
+  .admin-hero h2 {
+    font-size: 2.05rem;
+  }
+
+  .admin-summary-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .admin-summary-grid > div {
+    min-height: 104px;
+    padding: 14px;
   }
 
   .shader-card {
@@ -3064,8 +3350,24 @@ input[type='range'] {
 
   .calculator-section,
   .result-stack,
-  .quote-panel {
+  .quote-panel,
+  .admin-user-card {
     padding: 14px;
+  }
+
+  .admin-user-card {
+    grid-template-columns: 38px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .admin-avatar {
+    width: 38px;
+    height: 38px;
+  }
+
+  .role-control {
+    grid-column: 1 / -1;
+    grid-template-columns: 1fr;
   }
 
   .panel,

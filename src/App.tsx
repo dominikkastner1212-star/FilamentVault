@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { AppShell } from './components/AppShell';
+import { AdminPage } from './components/AdminPage';
 import { AuthView } from './components/AuthView';
 import { ActivityPage } from './components/ActivityPage';
 import { CalculatorPage } from './components/CalculatorPage';
@@ -44,6 +45,7 @@ function ScrollToTop() {
 export default function App() {
   const auth = useAuth();
   const vault = useFilamentVault(auth.profile, auth.isDemo);
+  const currentProfile = vault.profiles.find((profile) => profile.id === auth.profile?.id) || auth.profile;
   const [rollModal, setRollModal] = useState<{ roll: FilamentRoll | null } | null>(null);
   const [usageRollId, setUsageRollId] = useState<string | null>(null);
   const [toasts, setToasts] = useState<Toast[]>([]);
@@ -107,7 +109,7 @@ export default function App() {
 
   return (
     <AppShell
-      profile={auth.profile}
+      profile={currentProfile}
       isDemo={auth.isDemo}
       onAddRoll={() => setRollModal({ roll: null })}
       onAddUsage={() => openUsage()}
@@ -160,6 +162,17 @@ export default function App() {
           <Route path="/usage" element={<UsagePage usage={vault.usage} onAddUsage={() => openUsage()} />} />
           <Route path="/costs" element={<CostsPage profiles={vault.profiles} rolls={vault.rolls} usage={vault.usage} />} />
           <Route path="/calculator" element={<CalculatorPage rolls={vault.rolls} />} />
+          <Route
+            path="/admin"
+            element={
+              <AdminPage
+                currentProfile={currentProfile}
+                profiles={vault.profiles}
+                activity={vault.activity}
+                onUpdateRole={vault.updateProfileRole}
+              />
+            }
+          />
           <Route path="/activity" element={<ActivityPage activity={vault.activity} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

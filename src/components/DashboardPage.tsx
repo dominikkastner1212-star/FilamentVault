@@ -38,6 +38,10 @@ function StatCard({
 }
 
 function actionLabel(action: string) {
+  if (action === 'profile_role_updated') {
+    return 'Benutzerrolle geändert';
+  }
+
   const labels: Record<string, string> = {
     usage_logged: 'Verbrauch eingetragen',
     usage_updated: 'Verbrauch korrigiert',
@@ -216,7 +220,15 @@ export function DashboardPage({ profiles, rolls, usage, activity, onAddUsage }: 
             <article key={entry.id} className="activity-card">
               <span>{actionLabel(entry.action)}</span>
               <strong>{displayName(entry.actor)}</strong>
-              <p>{String(entry.metadata.project_name || entry.metadata.roll || entry.metadata.status || 'Bestand aktualisiert')}</p>
+              <p>
+                {String(
+                  entry.metadata.project_name ||
+                    entry.metadata.roll ||
+                    entry.metadata.profile ||
+                    entry.metadata.status ||
+                    'Bestand aktualisiert'
+                )}
+              </p>
               <small>{formatDateTime(entry.created_at)}</small>
             </article>
           ))}

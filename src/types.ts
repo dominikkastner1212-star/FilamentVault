@@ -1,14 +1,17 @@
 export const MATERIALS = ['PLA', 'PLA+', 'PETG', 'ASA', 'TPU', 'ABS'] as const;
 export const ROLL_STATUSES = ['aktiv', 'reserviert', 'leer'] as const;
+export const APP_ROLES = ['admin', 'member'] as const;
 
 export type Material = (typeof MATERIALS)[number];
 export type RollStatus = (typeof ROLL_STATUSES)[number];
+export type AppRole = (typeof APP_ROLES)[number];
 
 export type Profile = {
   id: string;
   email: string | null;
   full_name: string | null;
   avatar_url: string | null;
+  role: AppRole;
   created_at: string;
   updated_at: string;
 };

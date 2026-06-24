@@ -6,6 +6,10 @@ type ActivityPageProps = {
 };
 
 function readableAction(action: string) {
+  if (action === 'profile_role_updated') {
+    return 'Benutzerrolle geändert';
+  }
+
   const labels: Record<string, string> = {
     usage_logged: 'Verbrauch eingetragen',
     usage_updated: 'Verbrauch korrigiert',
@@ -37,7 +41,13 @@ export function ActivityPage({ activity }: ActivityPageProps) {
               <h3>{readableAction(entry.action)}</h3>
               <p>
                 {displayName(entry.actor)} ·{' '}
-                {String(entry.metadata.project_name || entry.metadata.roll || entry.metadata.status || entry.entity_type)}
+                {String(
+                  entry.metadata.project_name ||
+                    entry.metadata.roll ||
+                    entry.metadata.profile ||
+                    entry.metadata.status ||
+                    entry.entity_type
+                )}
               </p>
               {'used_weight_g' in entry.metadata ? <small>{formatGrams(Number(entry.metadata.used_weight_g))}</small> : null}
             </div>

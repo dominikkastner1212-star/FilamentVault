@@ -41,6 +41,7 @@ export function useAuth(): AuthState {
         email: email || null,
         full_name: email || 'Profil',
         avatar_url: null,
+        role: 'member',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       });
@@ -48,11 +49,14 @@ export function useAuth(): AuthState {
     }
 
     setProfile(
-      data || {
+      data
+        ? { ...data, role: data.role || 'member' }
+        : {
         id: userId,
         email: email || null,
         full_name: email || 'Profil',
         avatar_url: null,
+        role: 'member',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       }
