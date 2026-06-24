@@ -157,6 +157,7 @@ export default function App() {
                 usage={vault.usage}
                 onEdit={(roll) => setRollModal({ roll })}
                 onAddUsage={openUsage}
+                onDelete={deleteRoll}
               />
             }
           />

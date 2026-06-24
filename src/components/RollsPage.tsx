@@ -266,6 +266,10 @@ export function RollsPage({ rolls, usage, onEdit, onMarkEmpty, onDelete, onAddUs
                 <QrCode size={15} />
                 QR
               </Link>
+              <button type="button" className="ghost-button compact danger" onClick={() => onDelete(roll)}>
+                <Trash2 size={15} />
+                Löschen
+              </button>
             </div>
           </article>
         ))}

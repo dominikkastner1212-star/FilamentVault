@@ -1,5 +1,5 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Edit3, MapPin, QrCode as QrIcon, Scale } from 'lucide-react';
+import { ArrowLeft, Edit3, MapPin, QrCode as QrIcon, Scale, Trash2 } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import { QrCode } from './QrCode';
 import { getAppBaseUrl } from '../lib/supabase';
@@ -11,6 +11,7 @@ type RollDetailPageProps = {
   usage: FilamentUsage[];
   onEdit: (roll: FilamentRoll) => void;
   onAddUsage: (rollId: string) => void;
+  onDelete: (roll: FilamentRoll) => void;
 };
 
 function statusLabel(roll: FilamentRoll) {
@@ -24,7 +25,7 @@ function statusClass(roll: FilamentRoll) {
   return statusLabel(roll).toLowerCase();
 }
 
-export function RollDetailPage({ rolls, usage, onEdit, onAddUsage }: RollDetailPageProps) {
+export function RollDetailPage({ rolls, usage, onEdit, onAddUsage, onDelete }: RollDetailPageProps) {
   const { rollId } = useParams();
   const roll = rolls.find((item) => item.id === rollId);
 
@@ -69,6 +70,10 @@ export function RollDetailPage({ rolls, usage, onEdit, onAddUsage }: RollDetailP
               <button type="button" className="secondary-button" onClick={() => onEdit(roll)}>
                 <Edit3 size={17} />
                 Bearbeiten
+              </button>
+              <button type="button" className="ghost-button danger" onClick={() => onDelete(roll)}>
+                <Trash2 size={17} />
+                Löschen
               </button>
             </div>
           </div>
