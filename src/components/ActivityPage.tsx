@@ -24,7 +24,7 @@ export function ActivityPage({ activity }: ActivityPageProps) {
       <div className="page-title-row">
         <div>
           <h2>Letzte Aktivitaeten</h2>
-          <p>Audit-Log fuer Rollen, Verbrauch und Profilereignisse.</p>
+          <p>Audit-Log für Rollen, Verbrauch und Profilereignisse.</p>
         </div>
       </div>
 

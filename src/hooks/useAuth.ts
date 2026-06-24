@@ -157,7 +157,7 @@ export function useAuth(): AuthState {
   const startDemo = useCallback(() => {
     setIsDemo(true);
     setProfile(demoProfile);
-    setAuthMessage('Demo-Modus aktiv. Aenderungen bleiben in dieser Browser-Sitzung.');
+    setAuthMessage('Demo-Modus aktiv. Änderungen bleiben in dieser Browser-Sitzung.');
   }, []);
 
   return useMemo(

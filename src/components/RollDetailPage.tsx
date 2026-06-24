@@ -1,5 +1,6 @@
 import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, Edit3, Scale } from 'lucide-react';
+import { ArrowLeft, Edit3, MapPin, QrCode as QrIcon, Scale } from 'lucide-react';
+import type { CSSProperties } from 'react';
 import { QrCode } from './QrCode';
 import { getAppBaseUrl } from '../lib/supabase';
 import { displayName, formatCurrency, formatDate, formatGrams } from '../lib/format';
@@ -11,6 +12,17 @@ type RollDetailPageProps = {
   onEdit: (roll: FilamentRoll) => void;
   onAddUsage: (rollId: string) => void;
 };
+
+function statusLabel(roll: FilamentRoll) {
+  if (roll.status === 'leer') return 'Leer';
+  if (roll.remaining_weight_g < 150) return 'Niedrig';
+  if (roll.status === 'reserviert') return 'Reserviert';
+  return 'Aktiv';
+}
+
+function statusClass(roll: FilamentRoll) {
+  return statusLabel(roll).toLowerCase();
+}
 
 export function RollDetailPage({ rolls, usage, onEdit, onAddUsage }: RollDetailPageProps) {
   const { rollId } = useParams();
@@ -32,36 +44,47 @@ export function RollDetailPage({ rolls, usage, onEdit, onAddUsage }: RollDetailP
   const detailUrl = `${getAppBaseUrl().replace(/\/$/, '')}/rolls/${roll.id}`;
   const used = roll.original_weight_g - roll.remaining_weight_g;
   const fill = Math.max(0, Math.min(100, (roll.remaining_weight_g / roll.original_weight_g) * 100));
+  const usageCost = rollUsage.reduce((sum, entry) => sum + entry.cost_eur, 0);
 
   return (
-    <section className="detail-layout">
+    <section className="detail-layout detail-profile-layout">
       <div className="detail-main">
         <Link to="/rolls" className="text-link">
           <ArrowLeft size={16} />
           Rollen
         </Link>
 
-        <div className="detail-hero">
-          <span className="material-dot large" data-material={roll.material} />
-          <div>
-            <h2>{roll.manufacturer} · {roll.color}</h2>
-            <p>{roll.material} · {roll.storage_location}</p>
+        <div className="roll-profile-hero">
+          <div className="roll-profile-copy">
+            <span className={`status-chip status-${statusClass(roll)}`}>{statusLabel(roll)}</span>
+            <h2>{roll.manufacturer} - {roll.color}</h2>
+            <p>
+              {roll.material} in {roll.storage_location}, gekauft von {displayName(roll.buyer)}.
+            </p>
+            <div className="detail-actions">
+              <button type="button" className="primary-button" onClick={() => onAddUsage(roll.id)} disabled={roll.status === 'leer'}>
+                <Scale size={17} />
+                Schnellverbrauch
+              </button>
+              <button type="button" className="secondary-button" onClick={() => onEdit(roll)}>
+                <Edit3 size={17} />
+                Bearbeiten
+              </button>
+            </div>
           </div>
-          <span className={`status-chip status-${roll.status}`}>{roll.status}</span>
+
+          <div className="roll-profile-visual">
+            <span className="spool-orb large" data-material={roll.material}>
+              <i>{roll.material}</i>
+            </span>
+            <div className="remaining-ring large" style={{ '--remaining': `${fill * 3.6}deg` } as CSSProperties}>
+              <strong>{formatGrams(roll.remaining_weight_g)}</strong>
+              <span>{Math.round(fill)}% Rest</span>
+            </div>
+          </div>
         </div>
 
-        <div className="detail-actions">
-          <button type="button" className="primary-button" onClick={() => onAddUsage(roll.id)} disabled={roll.status === 'leer'}>
-            <Scale size={17} />
-            Verbrauch eintragen
-          </button>
-          <button type="button" className="secondary-button" onClick={() => onEdit(roll)}>
-            <Edit3 size={17} />
-            Bearbeiten
-          </button>
-        </div>
-
-        <div className="detail-metrics">
+        <div className="detail-metrics detail-metrics-rich">
           <div>
             <span>Restgewicht</span>
             <strong>{formatGrams(roll.remaining_weight_g)}</strong>
@@ -71,25 +94,22 @@ export function RollDetailPage({ rolls, usage, onEdit, onAddUsage }: RollDetailP
             <strong>{formatGrams(used)}</strong>
           </div>
           <div>
+            <span>Verbrauchskosten</span>
+            <strong>{formatCurrency(usageCost)}</strong>
+          </div>
+          <div>
             <span>Preis pro Gramm</span>
             <strong>{formatCurrency(roll.price / roll.original_weight_g)}</strong>
           </div>
-          <div>
-            <span>Kaeufer</span>
-            <strong>{displayName(roll.buyer)}</strong>
-          </div>
-        </div>
-
-        <div className="remaining-gauge" aria-label={`Restgewicht ${Math.round(fill)} Prozent`}>
-          <span style={{ width: `${fill}%` }} />
         </div>
 
         <section className="panel inset-panel">
           <div className="panel-header">
             <div>
               <h3>Rollendaten</h3>
-              <p>Gekauft am {formatDate(roll.purchase_date)} fuer {formatCurrency(roll.price)}.</p>
+              <p>Gekauft am {formatDate(roll.purchase_date)} für {formatCurrency(roll.price)}.</p>
             </div>
+            <MapPin size={18} />
           </div>
           <dl className="detail-list">
             <div>
@@ -115,33 +135,38 @@ export function RollDetailPage({ rolls, usage, onEdit, onAddUsage }: RollDetailP
           <div className="panel-header">
             <div>
               <h3>Verbrauchshistorie</h3>
-              <p>{rollUsage.length} Eintraege fuer diese Rolle.</p>
+              <p>{rollUsage.length} Einträge für diese Rolle.</p>
             </div>
           </div>
-          <div className="compact-list">
+          <div className="timeline-list">
             {rollUsage.length ? (
               rollUsage.map((entry) => (
-                <div className="compact-row" key={entry.id}>
+                <article className="timeline-row" key={entry.id}>
                   <span className="material-dot" data-material={roll.material} />
                   <div>
                     <strong>{entry.project_name}</strong>
-                    <small>{displayName(entry.user)} · {formatDate(entry.used_at)}</small>
+                    <p>{displayName(entry.user)} - {entry.note || 'Keine Notiz'}</p>
+                    <small>{formatDate(entry.used_at)}</small>
                   </div>
                   <em>{formatGrams(entry.used_weight_g)}</em>
-                </div>
+                </article>
               ))
             ) : (
-              <div className="empty-state">Noch kein Verbrauch fuer diese Rolle.</div>
+              <div className="empty-state">Noch kein Verbrauch für diese Rolle.</div>
             )}
           </div>
         </section>
       </div>
 
-      <aside className="detail-side">
+      <aside className="detail-side detail-side-stack">
         <section className="qr-panel">
-          <QrCode value={detailUrl} label={`QR-Code fuer ${roll.manufacturer} ${roll.color}`} />
-          <h3>QR-Code pro Rolle</h3>
-          <p>Scan oeffnet direkt diese Detailseite mit Schnellverbrauch.</p>
+          <QrCode value={detailUrl} label={`QR-Code für ${roll.manufacturer} ${roll.color}`} />
+          <h3>QR-Schnellzugriff</h3>
+          <p>Scan öffnet direkt diese Detailseite mit Schnellverbrauch.</p>
+          <Link to={detailUrl.replace(getAppBaseUrl().replace(/\/$/, ''), '')} className="secondary-button compact">
+            <QrIcon size={15} />
+            Detailseite
+          </Link>
         </section>
       </aside>
     </section>

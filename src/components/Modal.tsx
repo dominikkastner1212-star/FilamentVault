@@ -7,9 +7,10 @@ type ModalProps = {
   children: ReactNode;
   onClose: () => void;
   size?: 'narrow' | 'wide';
+  variant?: 'dialog' | 'sheet';
 };
 
-export function Modal({ title, subtitle, children, onClose, size = 'narrow' }: ModalProps) {
+export function Modal({ title, subtitle, children, onClose, size = 'narrow', variant = 'dialog' }: ModalProps) {
   useEffect(() => {
     function handleKey(event: KeyboardEvent) {
       if (event.key === 'Escape') {
@@ -24,7 +25,7 @@ export function Modal({ title, subtitle, children, onClose, size = 'narrow' }: M
   return (
     <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
       <section
-        className={`modal modal-${size}`}
+        className={`modal modal-${size} modal-${variant}`}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"

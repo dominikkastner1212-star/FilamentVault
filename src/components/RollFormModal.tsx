@@ -32,7 +32,7 @@ function validateRoll(values: RollFormValues) {
   const errors: string[] = [];
   if (!values.manufacturer.trim()) errors.push('Hersteller fehlt.');
   if (!values.color.trim()) errors.push('Farbe fehlt.');
-  if (!values.buyer_id) errors.push('Kaeufer fehlt.');
+  if (!values.buyer_id) errors.push('Käufer fehlt.');
   if (!values.storage_location.trim()) errors.push('Lagerort fehlt.');
   if (values.original_weight_g <= 0) errors.push('Ursprungsgewicht muss groesser als 0 g sein.');
   if (values.remaining_weight_g < 0) errors.push('Restgewicht darf nicht negativ sein.');
@@ -87,7 +87,7 @@ export function RollFormModal({ roll, profiles, onClose, onSubmit }: RollFormMod
   return (
     <Modal
       title={roll ? 'Rolle bearbeiten' : 'Rolle hinzufuegen'}
-      subtitle={roll ? 'Bestand, Status und Standort aktualisieren.' : 'Neue Filamentrolle fuer die Gruppe erfassen.'}
+      subtitle={roll ? 'Bestand, Status und Standort aktualisieren.' : 'Neue Filamentrolle für die Gruppe erfassen.'}
       onClose={onClose}
       size="wide"
     >
@@ -169,7 +169,7 @@ export function RollFormModal({ roll, profiles, onClose, onSubmit }: RollFormMod
         </label>
 
         <label>
-          Kaeufer
+          Käufer
           <select value={values.buyer_id} onChange={(event) => update('buyer_id', event.target.value)}>
             {profiles.map((profile) => (
               <option key={profile.id} value={profile.id}>

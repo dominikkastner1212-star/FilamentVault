@@ -16,7 +16,7 @@ export function CostsPage({ profiles, rolls, usage }: CostsPageProps) {
     <section className="page-stack">
       <div className="page-title-row">
         <div>
-          <h2>Kostenuebersicht</h2>
+          <h2>Kostenübersicht</h2>
           <p>Gekauft, verbraucht und offene Ausgleichsbetraege pro Person.</p>
         </div>
       </div>

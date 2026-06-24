@@ -13,7 +13,7 @@ export function UsagePage({ usage, onAddUsage }: UsagePageProps) {
       <div className="page-title-row">
         <div>
           <h2>Verbrauch</h2>
-          <p>{usage.length} Eintraege nach Datum sortiert.</p>
+          <p>{usage.length} Einträge nach Datum sortiert.</p>
         </div>
         <button type="button" className="primary-button" onClick={onAddUsage}>
           <Scale size={17} />

@@ -31,7 +31,7 @@ export function AuthView({ authMessage, onSignIn, onSignUp, onDemo }: AuthViewPr
     }
 
     if (mode === 'signup' && fullName.trim().length < 2) {
-      setError('Bitte gib einen Namen fuer dein Profil ein.');
+      setError('Bitte gib einen Namen für dein Profil ein.');
       return;
     }
 
@@ -56,7 +56,7 @@ export function AuthView({ authMessage, onSignIn, onSignUp, onDemo }: AuthViewPr
           <div className="brand-mark">FV</div>
           <div>
             <h1>FilamentVault</h1>
-            <p>Gemeinsame Filamentverwaltung fuer kleine 3D-Drucker-Gruppen.</p>
+            <p>Gemeinsame Filamentverwaltung für kleine 3D-Drucker-Gruppen.</p>
           </div>
         </div>
         <div className="auth-metrics">

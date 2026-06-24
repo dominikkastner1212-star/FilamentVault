@@ -1,5 +1,5 @@
-import { Navigate, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { AppShell } from './components/AppShell';
 import { AuthView } from './components/AuthView';
 import { ActivityPage } from './components/ActivityPage';
@@ -12,7 +12,13 @@ import { UsageFormModal } from './components/UsageFormModal';
 import { UsagePage } from './components/UsagePage';
 import { useAuth } from './hooks/useAuth';
 import { useFilamentVault } from './hooks/useFilamentVault';
-import { FilamentRoll } from './types';
+import { FilamentRoll, RollFormValues, UsageFormValues } from './types';
+
+type Toast = {
+  id: string;
+  title: string;
+  detail: string;
+};
 
 function LoadingScreen() {
   return (
@@ -24,11 +30,22 @@ function LoadingScreen() {
   );
 }
 
+function ScrollToTop() {
+  const location = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, [location.pathname]);
+
+  return null;
+}
+
 export default function App() {
   const auth = useAuth();
   const vault = useFilamentVault(auth.profile, auth.isDemo);
   const [rollModal, setRollModal] = useState<{ roll: FilamentRoll | null } | null>(null);
   const [usageRollId, setUsageRollId] = useState<string | null>(null);
+  const [toasts, setToasts] = useState<Toast[]>([]);
 
   if (auth.loading) {
     return <LoadingScreen />;
@@ -49,11 +66,42 @@ export default function App() {
     setUsageRollId(rollId || '');
   }
 
+  function showToast(title: string, detail: string) {
+    const id = crypto.randomUUID();
+    setToasts((items) => [...items.slice(-2), { id, title, detail }]);
+    window.setTimeout(() => {
+      setToasts((items) => items.filter((item) => item.id !== id));
+    }, 4200);
+  }
+
+  async function submitRoll(values: RollFormValues) {
+    if (rollModal?.roll) {
+      await vault.updateRoll(rollModal.roll.id, values);
+      showToast('Rolle aktualisiert', `${values.manufacturer} ${values.color} ist gespeichert.`);
+      return;
+    }
+
+    await vault.addRoll(values);
+    showToast('Rolle hinzugefuegt', `${values.manufacturer} ${values.material} ist im Vault.`);
+  }
+
+  async function submitUsage(values: UsageFormValues) {
+    const roll = vault.rolls.find((item) => item.id === values.roll_id);
+    await vault.addUsage(values);
+    showToast('Verbrauch gebucht', `${values.used_weight_g} g${roll ? ` von ${roll.manufacturer}` : ''} abgezogen.`);
+  }
+
   async function deleteRoll(roll: FilamentRoll) {
     const confirmed = window.confirm(`${roll.manufacturer} ${roll.material} ${roll.color} loeschen?`);
     if (confirmed) {
       await vault.deleteRoll(roll);
+      showToast('Rolle geloescht', `${roll.manufacturer} ${roll.color} wurde entfernt.`);
     }
+  }
+
+  async function markRollEmpty(roll: FilamentRoll) {
+    await vault.markRollEmpty(roll);
+    showToast('Rolle geleert', `${roll.manufacturer} ${roll.color} steht jetzt auf leer.`);
   }
 
   return (
@@ -66,6 +114,7 @@ export default function App() {
         auth.signOut().catch(() => undefined);
       }}
     >
+      <ScrollToTop />
       {vault.error ? <div className="form-error app-error">{vault.error}</div> : null}
       {vault.loading ? (
         <LoadingScreen />
@@ -88,9 +137,11 @@ export default function App() {
             element={
               <RollsPage
                 rolls={vault.rolls}
+                usage={vault.usage}
                 onEdit={(roll) => setRollModal({ roll })}
-                onMarkEmpty={vault.markRollEmpty}
+                onMarkEmpty={markRollEmpty}
                 onDelete={deleteRoll}
+                onAddUsage={openUsage}
               />
             }
           />
@@ -117,7 +168,7 @@ export default function App() {
           roll={rollModal.roll}
           profiles={vault.profiles}
           onClose={() => setRollModal(null)}
-          onSubmit={(values) => (rollModal.roll ? vault.updateRoll(rollModal.roll.id, values) : vault.addRoll(values))}
+          onSubmit={submitRoll}
         />
       ) : null}
 
@@ -126,8 +177,19 @@ export default function App() {
           rolls={vault.rolls}
           selectedRollId={usageRollId || null}
           onClose={() => setUsageRollId(null)}
-          onSubmit={vault.addUsage}
+          onSubmit={submitUsage}
         />
+      ) : null}
+
+      {toasts.length ? (
+        <div className="toast-stack" aria-live="polite" aria-label="Benachrichtigungen">
+          {toasts.map((toast) => (
+            <div className="toast-card" key={toast.id}>
+              <strong>{toast.title}</strong>
+              <span>{toast.detail}</span>
+            </div>
+          ))}
+        </div>
       ) : null}
     </AppShell>
   );
