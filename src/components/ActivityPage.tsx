@@ -10,9 +10,9 @@ function readableAction(action: string) {
     usage_logged: 'Verbrauch eingetragen',
     usage_updated: 'Verbrauch korrigiert',
     usage_deleted: 'Verbrauch entfernt',
-    roll_created: 'Rolle hinzugefuegt',
+    roll_created: 'Rolle hinzugefügt',
     roll_updated: 'Rolle aktualisiert',
-    roll_deleted: 'Rolle geloescht',
+    roll_deleted: 'Rolle gelöscht',
     roll_emptied: 'Rolle als leer markiert'
   };
   return labels[action] || action;
@@ -23,7 +23,7 @@ export function ActivityPage({ activity }: ActivityPageProps) {
     <section className="page-stack">
       <div className="page-title-row">
         <div>
-          <h2>Letzte Aktivitaeten</h2>
+          <h2>Letzte Aktivitäten</h2>
           <p>Audit-Log für Rollen, Verbrauch und Profilereignisse.</p>
         </div>
       </div>
@@ -43,7 +43,7 @@ export function ActivityPage({ activity }: ActivityPageProps) {
             </div>
           </article>
         ))}
-        {!activity.length ? <div className="empty-state">Noch keine Aktivitaeten vorhanden.</div> : null}
+        {!activity.length ? <div className="empty-state">Noch keine Aktivitäten vorhanden.</div> : null}
       </div>
     </section>
   );

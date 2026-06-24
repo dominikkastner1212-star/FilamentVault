@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { AppShell } from './components/AppShell';
 import { AuthView } from './components/AuthView';
 import { ActivityPage } from './components/ActivityPage';
+import { CalculatorPage } from './components/CalculatorPage';
 import { CostsPage } from './components/CostsPage';
 import { DashboardPage } from './components/DashboardPage';
 import { RollDetailPage } from './components/RollDetailPage';
@@ -82,7 +83,7 @@ export default function App() {
     }
 
     await vault.addRoll(values);
-    showToast('Rolle hinzugefuegt', `${values.manufacturer} ${values.material} ist im Vault.`);
+    showToast('Rolle hinzugefügt', `${values.manufacturer} ${values.material} ist im Vault.`);
   }
 
   async function submitUsage(values: UsageFormValues) {
@@ -92,10 +93,10 @@ export default function App() {
   }
 
   async function deleteRoll(roll: FilamentRoll) {
-    const confirmed = window.confirm(`${roll.manufacturer} ${roll.material} ${roll.color} loeschen?`);
+    const confirmed = window.confirm(`${roll.manufacturer} ${roll.material} ${roll.color} löschen?`);
     if (confirmed) {
       await vault.deleteRoll(roll);
-      showToast('Rolle geloescht', `${roll.manufacturer} ${roll.color} wurde entfernt.`);
+      showToast('Rolle gelöscht', `${roll.manufacturer} ${roll.color} wurde entfernt.`);
     }
   }
 
@@ -158,6 +159,7 @@ export default function App() {
           />
           <Route path="/usage" element={<UsagePage usage={vault.usage} onAddUsage={() => openUsage()} />} />
           <Route path="/costs" element={<CostsPage profiles={vault.profiles} rolls={vault.rolls} usage={vault.usage} />} />
+          <Route path="/calculator" element={<CalculatorPage rolls={vault.rolls} />} />
           <Route path="/activity" element={<ActivityPage activity={vault.activity} />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

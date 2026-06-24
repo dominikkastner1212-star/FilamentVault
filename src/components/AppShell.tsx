@@ -2,8 +2,8 @@ import { ReactNode } from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Activity,
-  BarChart3,
   Boxes,
+  Calculator,
   Gauge,
   LogOut,
   Plus,
@@ -24,11 +24,12 @@ type AppShellProps = {
 };
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: Gauge },
-  { to: '/rolls', label: 'Rollen', icon: Boxes },
-  { to: '/usage', label: 'Verbrauch', icon: Scale },
-  { to: '/costs', label: 'Kosten', icon: ReceiptText },
-  { to: '/activity', label: 'Aktivitaeten', icon: Activity }
+  { to: '/', label: 'Dashboard', mobileLabel: 'Start', icon: Gauge },
+  { to: '/rolls', label: 'Rollen', mobileLabel: 'Rollen', icon: Boxes },
+  { to: '/usage', label: 'Verbrauch', mobileLabel: 'Gramm', icon: Scale },
+  { to: '/costs', label: 'Kosten', mobileLabel: 'Kosten', icon: ReceiptText },
+  { to: '/calculator', label: 'Kalkulator', mobileLabel: 'Preis', icon: Calculator },
+  { to: '/activity', label: 'Aktivitäten', mobileLabel: 'Log', icon: Activity }
 ];
 
 export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onSignOut }: AppShellProps) {
@@ -83,12 +84,12 @@ export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onS
         </header>
 
         <nav className="mobile-nav" aria-label="Mobile Navigation">
-          {navItems.slice(0, 5).map((item) => {
+          {navItems.map((item) => {
             const Icon = item.icon;
             return (
               <NavLink key={item.to} to={item.to} end={item.to === '/'} className="mobile-nav-link">
                 <Icon size={18} />
-                <span>{item.label}</span>
+                <span>{item.mobileLabel}</span>
               </NavLink>
             );
           })}

@@ -42,9 +42,9 @@ function actionLabel(action: string) {
     usage_logged: 'Verbrauch eingetragen',
     usage_updated: 'Verbrauch korrigiert',
     usage_deleted: 'Verbrauch entfernt',
-    roll_created: 'Rolle hinzugefuegt',
+    roll_created: 'Rolle hinzugefügt',
     roll_updated: 'Rolle aktualisiert',
-    roll_deleted: 'Rolle geloescht',
+    roll_deleted: 'Rolle gelöscht',
     roll_emptied: 'Rolle als leer markiert'
   };
   return labels[action] || action;
@@ -206,7 +206,7 @@ export function DashboardPage({ profiles, rolls, usage, activity, onAddUsage }: 
       <section className="panel span-12">
         <div className="panel-header">
           <div>
-            <h2>Letzte Aktivitaeten</h2>
+            <h2>Letzte Aktivitäten</h2>
             <p>Nachvollziehbare Änderungen an Rollen und Verbräuchen.</p>
           </div>
           <Activity size={18} />
