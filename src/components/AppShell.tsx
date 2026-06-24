@@ -72,6 +72,7 @@ export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onS
               <NavLink key={item.to} to={item.to} end={item.to === '/'} className="nav-link">
                 <Icon size={18} />
                 <span>{item.label}</span>
+                <i aria-hidden="true" />
               </NavLink>
             );
           })}
@@ -116,6 +117,7 @@ export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onS
               <NavLink key={item.to} to={item.to} end={item.to === '/'} className="mobile-nav-link">
                 <Icon size={18} />
                 <span>{item.mobileLabel}</span>
+                <i aria-hidden="true" />
               </NavLink>
             );
           })}
