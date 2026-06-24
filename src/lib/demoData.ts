@@ -1,4 +1,4 @@
-import { ActivityLog, FilamentRoll, FilamentUsage, Profile } from '../types';
+import { ActivityLog, FilamentRoll, FilamentUsage, Printer, PrinterStatus, Profile } from '../types';
 
 const now = new Date();
 const iso = (daysAgo: number) => new Date(now.getTime() - daysAgo * 86400000).toISOString();
@@ -216,6 +216,57 @@ export const demoUsage: FilamentUsage[] = [
     updated_at: iso(1),
     user: demoProfiles[3],
     roll: demoRolls[2]
+  }
+];
+
+export const demoPrinters: Printer[] = [
+  {
+    id: 'ddddddd1-dddd-4ddd-8ddd-dddddddddd01',
+    name: 'Bambu P1S Werkstatt',
+    model: 'P1S',
+    serial: 'P1S-DEMO-001',
+    provider: 'bambu_cloud',
+    location: 'Druckerregal links',
+    notes: 'Demo-Monitoring ohne Fernsteuerung.',
+    is_active: true,
+    last_seen_at: iso(0),
+    created_at: iso(12),
+    updated_at: iso(0)
+  }
+];
+
+export const demoPrinterStatus: PrinterStatus[] = [
+  {
+    id: 1,
+    printer_id: demoPrinters[0].id,
+    recorded_at: new Date(now.getTime() - 8 * 60000).toISOString(),
+    stage: 'printing',
+    progress: 63,
+    layer_num: 146,
+    total_layer: 232,
+    nozzle_temp: 219.6,
+    bed_temp: 60.2,
+    remaining: 78,
+    gcode_file: 'filament-spool-holder.3mf',
+    ams: {
+      trays: [
+        { id: 0, material: 'PLA', color: 'Galaxy Black', remain: 620 },
+        { id: 1, material: 'PETG', color: 'Translucent Teal', remain: 118 }
+      ]
+    },
+    raw: {
+      print: {
+        gcode_state: 'RUNNING',
+        mc_percent: 63,
+        mc_remaining_time: 78,
+        layer_num: 146,
+        total_layer_num: 232,
+        nozzle_temper: 219.6,
+        bed_temper: 60.2,
+        gcode_file: 'filament-spool-holder.3mf'
+      }
+    },
+    printer: demoPrinters[0]
   }
 ];
 

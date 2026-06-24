@@ -1,10 +1,12 @@
 export const MATERIALS = ['PLA', 'PLA+', 'PETG', 'ASA', 'TPU', 'ABS'] as const;
 export const ROLL_STATUSES = ['aktiv', 'reserviert', 'leer'] as const;
 export const APP_ROLES = ['admin', 'member'] as const;
+export const PRINTER_PROVIDERS = ['bambu_cloud', 'lan_bridge', 'manual'] as const;
 
 export type Material = (typeof MATERIALS)[number];
 export type RollStatus = (typeof ROLL_STATUSES)[number];
 export type AppRole = (typeof APP_ROLES)[number];
+export type PrinterProvider = (typeof PRINTER_PROVIDERS)[number];
 
 export type Profile = {
   id: string;
@@ -49,6 +51,37 @@ export type FilamentUsage = {
   updated_at: string;
   user?: Pick<Profile, 'id' | 'full_name' | 'email'> | null;
   roll?: Pick<FilamentRoll, 'id' | 'manufacturer' | 'material' | 'color' | 'price' | 'original_weight_g'> | null;
+};
+
+export type Printer = {
+  id: string;
+  name: string;
+  model: string | null;
+  serial: string;
+  provider: PrinterProvider;
+  location: string | null;
+  notes: string | null;
+  is_active: boolean;
+  last_seen_at: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type PrinterStatus = {
+  id: number;
+  printer_id: string;
+  recorded_at: string;
+  stage: string | null;
+  progress: number | null;
+  layer_num: number | null;
+  total_layer: number | null;
+  nozzle_temp: number | null;
+  bed_temp: number | null;
+  remaining: number | null;
+  gcode_file: string | null;
+  ams: Record<string, unknown> | null;
+  raw: Record<string, unknown>;
+  printer?: Pick<Printer, 'id' | 'name' | 'model' | 'serial' | 'provider' | 'location'> | null;
 };
 
 export type ActivityLog = {

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { demoActivity, demoProfiles, demoRolls, demoUsage } from '../lib/demoData';
+import { demoActivity, demoPrinterStatus, demoPrinters, demoProfiles, demoRolls, demoUsage } from '../lib/demoData';
 import { supabase } from '../lib/supabase';
 import {
   ActivityLog,
@@ -7,6 +7,8 @@ import {
   FilamentRoll,
   FilamentUsage,
   MemberFormValues,
+  Printer,
+  PrinterStatus,
   Profile,
   RollFormValues,
   UsageFormValues
@@ -16,6 +18,8 @@ type VaultState = {
   profiles: Profile[];
   rolls: FilamentRoll[];
   usage: FilamentUsage[];
+  printers: Printer[];
+  printerStatus: PrinterStatus[];
   activity: ActivityLog[];
   loading: boolean;
   error: string | null;
@@ -56,6 +60,13 @@ function attachActivityRelations(activity: ActivityLog[], profiles: Profile[]) {
   }));
 }
 
+function attachPrinterStatusRelations(status: PrinterStatus[], printers: Printer[]) {
+  return status.map((entry) => ({
+    ...entry,
+    printer: entry.printer || printers.find((printer) => printer.id === entry.printer_id) || null
+  }));
+}
+
 function normalizeProfile(profile: Profile): Profile {
   return {
     ...profile,
@@ -86,6 +97,10 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
   const [profiles, setProfiles] = useState<Profile[]>(demoProfiles);
   const [rolls, setRolls] = useState<FilamentRoll[]>(attachRollRelations(demoRolls, demoProfiles));
   const [usage, setUsage] = useState<FilamentUsage[]>(attachUsageRelations(demoUsage, demoRolls, demoProfiles));
+  const [printers, setPrinters] = useState<Printer[]>(demoPrinters);
+  const [printerStatus, setPrinterStatus] = useState<PrinterStatus[]>(
+    attachPrinterStatusRelations(demoPrinterStatus, demoPrinters)
+  );
   const [activity, setActivity] = useState<ActivityLog[]>(attachActivityRelations(demoActivity, demoProfiles));
   const [loading, setLoading] = useState(!isDemo);
   const [error, setError] = useState<string | null>(null);
@@ -95,6 +110,10 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       setProfiles((existing) => (existing.length ? existing : demoProfiles));
       setRolls((existing) => attachRollRelations(existing.length ? existing : demoRolls, demoProfiles));
       setUsage((existing) => attachUsageRelations(existing.length ? existing : demoUsage, demoRolls, demoProfiles));
+      setPrinters((existing) => (existing.length ? existing : demoPrinters));
+      setPrinterStatus((existing) =>
+        attachPrinterStatusRelations(existing.length ? existing : demoPrinterStatus, demoPrinters)
+      );
       setActivity((existing) => attachActivityRelations(existing.length ? existing : demoActivity, demoProfiles));
       setLoading(false);
       return;
@@ -108,7 +127,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
     setLoading(true);
     setError(null);
 
-    const [profilesResult, rollsResult, usageResult, activityResult] = await Promise.all([
+    const [profilesResult, rollsResult, usageResult, printersResult, printerStatusResult, activityResult] = await Promise.all([
       supabase.from('profiles').select('*').order('full_name', { ascending: true }),
       supabase
         .from('filament_rolls')
@@ -120,6 +139,12 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
           '*, user:profiles!filament_usage_user_id_fkey(id, full_name, email), roll:filament_rolls!filament_usage_roll_id_fkey(id, manufacturer, material, color, price, original_weight_g)'
         )
         .order('used_at', { ascending: false }),
+      supabase.from('printers').select('*').order('name', { ascending: true }),
+      supabase
+        .from('printer_status')
+        .select('*, printer:printers!printer_status_printer_id_fkey(id, name, model, serial, provider, location)')
+        .order('recorded_at', { ascending: false })
+        .limit(120),
       supabase
         .from('activity_log')
         .select('*, actor:profiles!activity_log_actor_id_fkey(id, full_name, email)')
@@ -127,7 +152,13 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
         .limit(50)
     ]);
 
-    const firstError = profilesResult.error || rollsResult.error || usageResult.error || activityResult.error;
+    const firstError =
+      profilesResult.error ||
+      rollsResult.error ||
+      usageResult.error ||
+      printersResult.error ||
+      printerStatusResult.error ||
+      activityResult.error;
     if (firstError) {
       setError(firstError.message);
       setLoading(false);
@@ -137,6 +168,8 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
     setProfiles(((profilesResult.data || []) as Profile[]).map(normalizeProfile));
     setRolls((rollsResult.data || []) as FilamentRoll[]);
     setUsage((usageResult.data || []) as FilamentUsage[]);
+    setPrinters((printersResult.data || []) as Printer[]);
+    setPrinterStatus((printerStatusResult.data || []) as PrinterStatus[]);
     setActivity((activityResult.data || []) as ActivityLog[]);
     setLoading(false);
   }, [currentProfile, isDemo]);
@@ -144,6 +177,27 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
   useEffect(() => {
     refresh();
   }, [refresh]);
+
+  useEffect(() => {
+    if (isDemo || !supabase || !currentProfile) {
+      return undefined;
+    }
+
+    const client = supabase;
+    const channel = client
+      .channel('printer-monitoring')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'printer_status' }, () => {
+        refresh().catch(() => undefined);
+      })
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'printers' }, () => {
+        refresh().catch(() => undefined);
+      })
+      .subscribe();
+
+    return () => {
+      client.removeChannel(channel).catch(() => undefined);
+    };
+  }, [currentProfile, isDemo, refresh]);
 
   const addRoll = useCallback(
     async (values: RollFormValues) => {
@@ -527,6 +581,8 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       profiles,
       rolls,
       usage,
+      printers,
+      printerStatus,
       activity: sortByCreatedAt(activity),
       loading,
       error,
@@ -550,6 +606,8 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       error,
       loading,
       markRollEmpty,
+      printerStatus,
+      printers,
       profiles,
       refresh,
       rolls,

@@ -7,6 +7,7 @@ import { ActivityPage } from './components/ActivityPage';
 import { CalculatorPage } from './components/CalculatorPage';
 import { CostsPage } from './components/CostsPage';
 import { DashboardPage } from './components/DashboardPage';
+import { PrinterMonitoringPage } from './components/PrinterMonitoringPage';
 import { RollDetailPage } from './components/RollDetailPage';
 import { RollFormModal } from './components/RollFormModal';
 import { RollsPage } from './components/RollsPage';
@@ -161,6 +162,7 @@ export default function App() {
           />
           <Route path="/usage" element={<UsagePage usage={vault.usage} onAddUsage={() => openUsage()} />} />
           <Route path="/costs" element={<CostsPage profiles={vault.profiles} rolls={vault.rolls} usage={vault.usage} />} />
+          <Route path="/printers" element={<PrinterMonitoringPage printers={vault.printers} status={vault.printerStatus} />} />
           <Route path="/calculator" element={<CalculatorPage rolls={vault.rolls} />} />
           <Route
             path="/admin"

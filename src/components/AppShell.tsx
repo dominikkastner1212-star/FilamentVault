@@ -7,6 +7,7 @@ import {
   Gauge,
   LogOut,
   Plus,
+  Printer,
   ReceiptText,
   Scale,
   Settings2,
@@ -29,6 +30,7 @@ const baseNavItems = [
   { to: '/rolls', label: 'Rollen', mobileLabel: 'Rollen', icon: Boxes },
   { to: '/usage', label: 'Verbrauch', mobileLabel: 'Gramm', icon: Scale },
   { to: '/costs', label: 'Kosten', mobileLabel: 'Kosten', icon: ReceiptText },
+  { to: '/printers', label: 'Drucker', mobileLabel: 'Drucker', icon: Printer },
   { to: '/calculator', label: 'Kalkulator', mobileLabel: 'Preis', icon: Calculator },
   { to: '/activity', label: 'Aktivitäten', mobileLabel: 'Log', icon: Activity }
 ];

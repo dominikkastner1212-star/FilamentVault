@@ -2667,6 +2667,282 @@ input[type='range'] {
   white-space: pre-wrap;
 }
 
+.printer-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(170px, 240px);
+  gap: 18px;
+  align-items: stretch;
+  padding: clamp(20px, 4vw, 30px);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(circle at 88% 16%, rgba(47, 159, 143, 0.18), transparent 30%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.97), rgba(244, 248, 247, 0.92));
+  box-shadow: var(--shadow);
+  animation: vault-rise var(--motion-spring) both;
+}
+
+.printer-hero h2 {
+  max-width: 720px;
+  margin: 12px 0 0;
+  color: var(--ink);
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  line-height: 0.98;
+}
+
+.printer-hero p {
+  max-width: 620px;
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.printer-signal {
+  min-height: 150px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  border: 1px solid rgba(16, 20, 23, 0.08);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.76);
+  box-shadow: 0 18px 46px rgba(16, 20, 23, 0.08);
+}
+
+.printer-signal svg {
+  color: var(--accent-strong);
+}
+
+.printer-signal strong {
+  color: var(--ink);
+  font-size: 2.1rem;
+  line-height: 1;
+}
+
+.printer-signal span {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 760;
+}
+
+.printer-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.printer-card {
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.92);
+  box-shadow: 0 18px 52px rgba(16, 20, 23, 0.08);
+  animation: vault-rise var(--motion-spring) both;
+}
+
+.printer-card-head,
+.printer-progress > div,
+.printer-foot,
+.printer-log-list > div:not(.empty-state) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.printer-card-head svg {
+  color: var(--accent-strong);
+}
+
+.printer-card h3 {
+  margin: 10px 0 0;
+  color: var(--ink);
+  font-size: 1.22rem;
+}
+
+.printer-card p,
+.printer-foot small,
+.printer-foot span {
+  margin: 5px 0 0;
+  color: var(--muted);
+  font-size: 0.82rem;
+  line-height: 1.38;
+}
+
+.stage-pill {
+  width: fit-content;
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 0.74rem;
+  font-weight: 790;
+}
+
+.stage-pill.printing,
+.status-dot.printing {
+  color: #0d6259;
+  background: #dff7f0;
+}
+
+.stage-pill.paused,
+.status-dot.paused {
+  color: #85590f;
+  background: #fff0d8;
+}
+
+.stage-pill.failed,
+.status-dot.failed {
+  color: var(--danger);
+  background: rgba(185, 77, 82, 0.12);
+}
+
+.stage-pill.idle,
+.status-dot.idle {
+  color: #526065;
+  background: #eef3f1;
+}
+
+.printer-progress {
+  display: grid;
+  gap: 10px;
+}
+
+.printer-progress strong {
+  color: var(--ink);
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.printer-progress span {
+  max-width: 58%;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 720;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.printer-progress em {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e7eeeb;
+}
+
+.printer-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+}
+
+.printer-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.printer-metric {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface-soft);
+}
+
+.printer-metric > span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--accent-strong);
+  background: #e4f4ef;
+}
+
+.printer-metric small {
+  display: block;
+  color: var(--muted);
+  font-size: 0.68rem;
+  font-weight: 760;
+}
+
+.printer-metric strong {
+  display: block;
+  margin-top: 3px;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.printer-log-panel,
+.raw-monitor-panel {
+  padding: 0;
+}
+
+.printer-log-list {
+  display: grid;
+}
+
+.printer-log-list > div:not(.empty-state) {
+  align-items: center;
+  padding: 14px 18px;
+  border-top: 1px solid var(--line);
+}
+
+.printer-log-list > div:first-child {
+  border-top: 0;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  flex: 0 0 auto;
+  border-radius: 999px;
+}
+
+.printer-log-list strong {
+  color: var(--ink);
+}
+
+.printer-log-list small,
+.printer-log-list em {
+  display: block;
+  margin-top: 3px;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-style: normal;
+}
+
+.raw-monitor-panel pre {
+  max-height: 340px;
+  overflow: auto;
+  margin: 0;
+  padding: 18px;
+  border-top: 1px solid var(--line);
+  color: var(--ink-soft);
+  background: rgba(246, 249, 248, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+
+.printer-empty {
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+}
+
+.printer-empty svg {
+  color: var(--accent-strong);
+}
+
 .admin-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(240px, 360px);
@@ -2952,6 +3228,8 @@ input[type='range'] {
 
   .calculator-hero,
   .calculator-layout,
+  .printer-hero,
+  .printer-grid,
   .admin-hero,
   .admin-layout {
     grid-template-columns: 1fr;
@@ -3196,6 +3474,10 @@ input[type='range'] {
     grid-template-columns: 44px minmax(0, 1fr);
   }
 
+  .printer-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .role-control {
     grid-column: 2;
     grid-template-columns: auto minmax(160px, 1fr);
@@ -3276,7 +3558,7 @@ input[type='range'] {
   .mobile-nav {
     display: grid;
     z-index: 25;
-    grid-template-columns: repeat(6, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(44px, 1fr));
     gap: 4px;
     padding: 6px;
     margin: 8px 0 16px;
@@ -3367,7 +3649,8 @@ input[type='range'] {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .calculator-hero {
+  .calculator-hero,
+  .printer-hero {
     padding: 16px;
   }
 
@@ -3375,7 +3658,8 @@ input[type='range'] {
     padding: 16px;
   }
 
-  .calculator-hero h2 {
+  .calculator-hero h2,
+  .printer-hero h2 {
     font-size: 2.22rem;
   }
 
@@ -3404,15 +3688,28 @@ input[type='range'] {
   }
 
   .form-grid.compact,
+  .printer-metrics,
   .result-grid {
     grid-template-columns: 1fr;
   }
 
   .calculator-section,
+  .printer-card,
   .result-stack,
   .quote-panel,
   .admin-user-card {
     padding: 14px;
+  }
+
+  .printer-progress > div,
+  .printer-log-list > div:not(.empty-state) {
+    display: grid;
+    justify-items: start;
+  }
+
+  .printer-progress span {
+    max-width: 100%;
+    text-align: left;
   }
 
   .admin-user-card {
