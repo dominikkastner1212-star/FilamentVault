@@ -4529,3 +4529,26 @@ input[type='range'] {
   background: linear-gradient(135deg, var(--pm-accent, #f3a6b0), var(--pm-accent-strong, #e8818f));
   box-shadow: 0 16px 32px rgba(232, 129, 143, 0.3);
 }
+
+/* ---- Pastel theme: settlement bars, avatars, roll progress bars ---- */
+.pastel-mock .positive {
+  color: var(--pm-accent-strong, #e8818f) !important;
+}
+
+.pastel-mock .profile-chip > span,
+.pastel-mock .person-row > span {
+  background: linear-gradient(145deg, var(--pm-accent, #f3a6b0), var(--pm-accent-strong, #e8818f));
+  color: #fff;
+}
+
+.pastel-mock .mini-bars i,
+.pastel-mock .micro-gauge i,
+.pastel-mock .bar-track span {
+  background: linear-gradient(90deg, var(--pm-accent, #f3a6b0), var(--pm-accent-strong, #e8818f));
+}
+
+.pastel-mock .mini-bars span,
+.pastel-mock .micro-gauge,
+.pastel-mock .bar-track {
+  background: rgba(190, 175, 165, 0.18);
+}
