@@ -170,6 +170,8 @@ export default function App() {
                 profiles={vault.profiles}
                 activity={vault.activity}
                 onUpdateRole={vault.updateProfileRole}
+                onCreateMember={vault.createMember}
+                onDeleteMember={vault.deleteMember}
               />
             }
           />

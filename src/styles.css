@@ -400,6 +400,7 @@ button:disabled {
 .primary-button,
 .secondary-button,
 .ghost-button,
+.danger-button,
 .icon-button,
 .text-link {
   position: relative;
@@ -425,6 +426,7 @@ button:disabled {
 .primary-button::after,
 .secondary-button::after,
 .ghost-button::after,
+.danger-button::after,
 .icon-button::after {
   content: '';
   position: absolute;
@@ -438,6 +440,7 @@ button:disabled {
 .primary-button:hover::after,
 .secondary-button:hover::after,
 .ghost-button:hover::after,
+.danger-button:hover::after,
 .icon-button:hover::after {
   animation: vault-sheen 760ms ease;
 }
@@ -450,6 +453,7 @@ button:disabled {
 .primary-button:hover,
 .secondary-button:hover,
 .ghost-button:hover,
+.danger-button:hover,
 .icon-button:hover {
   transform: translateY(-1px);
 }
@@ -476,6 +480,23 @@ button:disabled {
   width: 100%;
   color: rgba(234, 240, 238, 0.8);
   border-color: rgba(255, 255, 255, 0.08);
+}
+
+.primary-button.full,
+.secondary-button.full,
+.danger-button.full {
+  width: 100%;
+}
+
+.danger-button {
+  color: var(--danger);
+  background: rgba(185, 77, 82, 0.08);
+  border: 1px solid rgba(185, 77, 82, 0.2);
+}
+
+.danger-button:hover {
+  background: rgba(185, 77, 82, 0.12);
+  border-color: rgba(185, 77, 82, 0.32);
 }
 
 .icon-button {
@@ -1455,6 +1476,25 @@ label {
   color: var(--ink-soft);
   font-size: 0.82rem;
   font-weight: 760;
+}
+
+.input-with-icon {
+  position: relative;
+  display: block;
+}
+
+.input-with-icon svg {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  color: var(--muted);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.input-with-icon input {
+  width: 100%;
+  padding-left: 38px;
 }
 
 .form-summary {
@@ -2777,6 +2817,17 @@ input[type='range'] {
   gap: 8px;
 }
 
+.admin-user-actions {
+  align-items: start;
+}
+
+.admin-user-actions .danger-button {
+  justify-self: start;
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 0.8rem;
+}
+
 .role-pill {
   width: fit-content;
   min-height: 28px;
@@ -2803,6 +2854,11 @@ input[type='range'] {
   top: 22px;
   display: grid;
   gap: 16px;
+}
+
+.admin-create-form {
+  display: grid;
+  gap: 13px;
 }
 
 .permission-list,
@@ -3146,6 +3202,10 @@ input[type='range'] {
     align-items: center;
   }
 
+  .admin-user-actions .danger-button {
+    grid-column: 1 / -1;
+  }
+
   .material-row {
     grid-template-columns: 98px 1fr 72px;
   }
@@ -3368,6 +3428,10 @@ input[type='range'] {
   .role-control {
     grid-column: 1 / -1;
     grid-template-columns: 1fr;
+  }
+
+  .admin-user-actions .danger-button {
+    width: 100%;
   }
 
   .panel,

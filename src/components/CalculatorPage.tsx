@@ -29,6 +29,8 @@ type CalculatorState = {
   vatPercent: number;
 };
 
+type NumericField = Exclude<keyof CalculatorState, 'projectName' | 'rollId' | 'material'>;
+
 const presets = [
   {
     label: 'Freundschaft',
@@ -67,6 +69,7 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
   );
   const firstRoll = activeRolls[0];
   const [copied, setCopied] = useState(false);
+  const [draftNumbers, setDraftNumbers] = useState<Partial<Record<NumericField, string>>>({});
   const [values, setValues] = useState<CalculatorState>({
     projectName: 'Druckauftrag',
     rollId: firstRoll?.id ?? '',
@@ -127,7 +130,26 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
     setValues((current) => ({ ...current, [key]: value }));
   }
 
-  function setNumericField(key: keyof CalculatorState, raw: string, min = 0) {
+  function numericInputValue(key: NumericField, value: number) {
+    return draftNumbers[key] ?? String(value);
+  }
+
+  function setNumericField(key: NumericField, raw: string, min = 0) {
+    setCopied(false);
+    setDraftNumbers((current) => ({ ...current, [key]: raw }));
+    const nextValue = raw.trim() === '' ? min : toPositive(toNumber(raw), min);
+    setValues((current) => ({ ...current, [key]: nextValue }));
+  }
+
+  function commitNumericField(key: NumericField) {
+    setDraftNumbers((current) => {
+      const next = { ...current };
+      delete next[key];
+      return next;
+    });
+  }
+
+  function setRangeField(key: NumericField, raw: string, min = 0) {
     setCopied(false);
     setValues((current) => ({ ...current, [key]: toPositive(toNumber(raw), min) }));
   }
@@ -135,6 +157,7 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
   function selectRoll(rollId: string) {
     const roll = activeRolls.find((item) => item.id === rollId);
     setCopied(false);
+    setDraftNumbers({});
     setValues((current) => ({
       ...current,
       rollId,
@@ -145,6 +168,7 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
 
   function applyPreset(preset: (typeof presets)[number]) {
     setCopied(false);
+    setDraftNumbers({});
     setValues((current) => ({ ...current, ...preset.values }));
   }
 
@@ -245,9 +269,12 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.1"
-                  value={materialPricePerKg}
+                  value={
+                    selectedRoll ? materialPricePerKg : numericInputValue('materialPricePerKg', values.materialPricePerKg)
+                  }
                   disabled={Boolean(selectedRoll)}
                   onChange={(event) => setNumericField('materialPricePerKg', event.target.value)}
+                  onBlur={() => commitNumericField('materialPricePerKg')}
                 />
               </label>
               <label>
@@ -256,8 +283,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="1"
                   step="1"
-                  value={quantity}
+                  value={numericInputValue('quantity', values.quantity)}
                   onChange={(event) => setNumericField('quantity', event.target.value, 1)}
+                  onBlur={() => commitNumericField('quantity')}
                 />
               </label>
               <label>
@@ -266,8 +294,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={values.partWeightG}
+                  value={numericInputValue('partWeightG', values.partWeightG)}
                   onChange={(event) => setNumericField('partWeightG', event.target.value)}
+                  onBlur={() => commitNumericField('partWeightG')}
                 />
               </label>
               <label>
@@ -276,8 +305,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={values.wastePercent}
+                  value={numericInputValue('wastePercent', values.wastePercent)}
                   onChange={(event) => setNumericField('wastePercent', event.target.value)}
+                  onBlur={() => commitNumericField('wastePercent')}
                 />
               </label>
             </div>
@@ -292,8 +322,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.25"
-                  value={values.printHours}
+                  value={numericInputValue('printHours', values.printHours)}
                   onChange={(event) => setNumericField('printHours', event.target.value)}
+                  onBlur={() => commitNumericField('printHours')}
                 />
               </label>
               <label>
@@ -302,8 +333,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={values.printMinutes}
+                  value={numericInputValue('printMinutes', values.printMinutes)}
                   onChange={(event) => setNumericField('printMinutes', event.target.value)}
+                  onBlur={() => commitNumericField('printMinutes')}
                 />
               </label>
               <label>
@@ -312,8 +344,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.1"
-                  value={values.machineRate}
+                  value={numericInputValue('machineRate', values.machineRate)}
                   onChange={(event) => setNumericField('machineRate', event.target.value)}
+                  onBlur={() => commitNumericField('machineRate')}
                 />
               </label>
               <label>
@@ -322,8 +355,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={values.printerWatt}
+                  value={numericInputValue('printerWatt', values.printerWatt)}
                   onChange={(event) => setNumericField('printerWatt', event.target.value)}
+                  onBlur={() => commitNumericField('printerWatt')}
                 />
               </label>
               <label>
@@ -332,8 +366,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.01"
-                  value={values.electricityPrice}
+                  value={numericInputValue('electricityPrice', values.electricityPrice)}
                   onChange={(event) => setNumericField('electricityPrice', event.target.value)}
+                  onBlur={() => commitNumericField('electricityPrice')}
                 />
               </label>
               <label>
@@ -342,8 +377,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="1"
-                  value={values.setupMinutes}
+                  value={numericInputValue('setupMinutes', values.setupMinutes)}
                   onChange={(event) => setNumericField('setupMinutes', event.target.value)}
+                  onBlur={() => commitNumericField('setupMinutes')}
                 />
               </label>
             </div>
@@ -358,8 +394,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.5"
-                  value={values.laborRate}
+                  value={numericInputValue('laborRate', values.laborRate)}
                   onChange={(event) => setNumericField('laborRate', event.target.value)}
+                  onBlur={() => commitNumericField('laborRate')}
                 />
               </label>
               <label>
@@ -368,8 +405,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.5"
-                  value={values.postProcessingCost}
+                  value={numericInputValue('postProcessingCost', values.postProcessingCost)}
                   onChange={(event) => setNumericField('postProcessingCost', event.target.value)}
+                  onBlur={() => commitNumericField('postProcessingCost')}
                 />
               </label>
               <label>
@@ -378,8 +416,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.1"
-                  value={values.packagingCost}
+                  value={numericInputValue('packagingCost', values.packagingCost)}
                   onChange={(event) => setNumericField('packagingCost', event.target.value)}
+                  onBlur={() => commitNumericField('packagingCost')}
                 />
               </label>
               <label>
@@ -388,8 +427,9 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   type="number"
                   min="0"
                   step="0.5"
-                  value={values.platformFeePercent}
+                  value={numericInputValue('platformFeePercent', values.platformFeePercent)}
                   onChange={(event) => setNumericField('platformFeePercent', event.target.value)}
+                  onBlur={() => commitNumericField('platformFeePercent')}
                 />
               </label>
               <label className="range-label">
@@ -401,7 +441,7 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   max="120"
                   step="1"
                   value={values.marginPercent}
-                  onChange={(event) => setNumericField('marginPercent', event.target.value)}
+                  onChange={(event) => setRangeField('marginPercent', event.target.value)}
                 />
               </label>
               <label className="range-label">
@@ -413,7 +453,7 @@ export function CalculatorPage({ rolls }: CalculatorPageProps) {
                   max="25"
                   step="1"
                   value={values.vatPercent}
-                  onChange={(event) => setNumericField('vatPercent', event.target.value)}
+                  onChange={(event) => setRangeField('vatPercent', event.target.value)}
                 />
               </label>
             </div>

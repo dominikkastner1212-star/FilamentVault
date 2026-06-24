@@ -6,6 +6,7 @@ import {
   AppRole,
   FilamentRoll,
   FilamentUsage,
+  MemberFormValues,
   Profile,
   RollFormValues,
   UsageFormValues
@@ -25,6 +26,8 @@ type VaultState = {
   deleteRoll: (roll: FilamentRoll) => Promise<void>;
   addUsage: (values: UsageFormValues) => Promise<void>;
   updateProfileRole: (profileId: string, role: AppRole) => Promise<void>;
+  createMember: (values: MemberFormValues) => Promise<void>;
+  deleteMember: (profile: Profile) => Promise<void>;
 };
 
 function sortByCreatedAt<T extends { created_at: string }>(items: T[]) {
@@ -399,6 +402,126 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
     [currentProfile, isDemo, profiles, refresh]
   );
 
+  const createMember = useCallback(
+    async (values: MemberFormValues) => {
+      if (!currentProfile) {
+        throw new Error('Kein Benutzer aktiv.');
+      }
+
+      if (currentProfile.role !== 'admin') {
+        throw new Error('Nur Admins duerfen Mitglieder anlegen.');
+      }
+
+      const email = values.email.trim().toLowerCase();
+      const fullName = values.full_name.trim();
+
+      if (!email || !fullName || values.password.length < 8) {
+        throw new Error('E-Mail, Name und ein Passwort mit mindestens 8 Zeichen sind erforderlich.');
+      }
+
+      if (isDemo || !supabase) {
+        if (profiles.some((profile) => profile.email?.toLowerCase() === email)) {
+          throw new Error('Diese E-Mail existiert bereits.');
+        }
+
+        const created: Profile = {
+          id: crypto.randomUUID(),
+          email,
+          full_name: fullName,
+          avatar_url: null,
+          role: values.role,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        };
+
+        setProfiles((items) => [...items, created].sort((a, b) => displayProfileName(a).localeCompare(displayProfileName(b))));
+        setActivity((items) => [
+          createActivity(currentProfile, 'profile_created', 'profile', created.id, {
+            profile: fullName,
+            email,
+            role: values.role
+          }),
+          ...items
+        ]);
+        return;
+      }
+
+      const { error: createError } = await supabase.rpc('admin_create_member', {
+        p_email: email,
+        p_full_name: fullName,
+        p_password: values.password,
+        p_role: values.role
+      });
+
+      if (createError) {
+        throw new Error(createError.message);
+      }
+
+      await refresh();
+    },
+    [currentProfile, isDemo, profiles, refresh]
+  );
+
+  const deleteMember = useCallback(
+    async (profile: Profile) => {
+      if (!currentProfile) {
+        throw new Error('Kein Benutzer aktiv.');
+      }
+
+      if (currentProfile.role !== 'admin') {
+        throw new Error('Nur Admins duerfen Mitglieder loeschen.');
+      }
+
+      if (profile.id === currentProfile.id) {
+        throw new Error('Du kannst deinen eigenen Admin-Zugang nicht loeschen.');
+      }
+
+      if (profile.role === 'admin' && profiles.filter((item) => item.role === 'admin').length <= 1) {
+        throw new Error('Mindestens ein Admin muss erhalten bleiben.');
+      }
+
+      if (isDemo || !supabase) {
+        setProfiles((items) => items.filter((item) => item.id !== profile.id));
+        setRolls((items) =>
+          items.map((roll) => ({
+            ...roll,
+            buyer_id: roll.buyer_id === profile.id ? currentProfile.id : roll.buyer_id,
+            created_by: roll.created_by === profile.id ? currentProfile.id : roll.created_by,
+            updated_by: roll.updated_by === profile.id ? currentProfile.id : roll.updated_by,
+            buyer: roll.buyer_id === profile.id ? currentProfile : roll.buyer
+          }))
+        );
+        setUsage((items) =>
+          items.map((entry) => ({
+            ...entry,
+            user_id: entry.user_id === profile.id ? currentProfile.id : entry.user_id,
+            user: entry.user_id === profile.id ? currentProfile : entry.user
+          }))
+        );
+        setActivity((items) => [
+          createActivity(currentProfile, 'profile_deleted', 'profile', profile.id, {
+            profile: profile.full_name || profile.email || 'Profil',
+            email: profile.email,
+            role: profile.role
+          }),
+          ...items
+        ]);
+        return;
+      }
+
+      const { error: deleteError } = await supabase.rpc('admin_delete_member', {
+        p_profile_id: profile.id
+      });
+
+      if (deleteError) {
+        throw new Error(deleteError.message);
+      }
+
+      await refresh();
+    },
+    [currentProfile, isDemo, profiles, refresh]
+  );
+
   return useMemo(
     () => ({
       profiles,
@@ -413,12 +536,16 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       markRollEmpty,
       deleteRoll,
       addUsage,
-      updateProfileRole
+      updateProfileRole,
+      createMember,
+      deleteMember
     }),
     [
       activity,
       addRoll,
       addUsage,
+      createMember,
+      deleteMember,
       deleteRoll,
       error,
       loading,
@@ -431,4 +558,8 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       usage
     ]
   );
+}
+
+function displayProfileName(profile: Pick<Profile, 'full_name' | 'email'>) {
+  return profile.full_name || profile.email || '';
 }

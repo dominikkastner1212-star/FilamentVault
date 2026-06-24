@@ -10,7 +10,7 @@ FilamentVault ist eine mobile-first PWA fuer die gemeinsame Filamentverwaltung e
 - Verbrauchserfassung mit automatischer Restgewichtsreduktion
 - Kostenuebersicht pro Person inklusive Ausgleichsbetrag
 - Druckauftrag-Kalkulator fuer Verkaufspreise mit Material, Maschinenzeit, Energie, Arbeit, Marge und MwSt.
-- Benutzerrollen: `admin` und `member`, inklusive Admin-Seite zur Rollenverwaltung
+- Benutzerrollen: `admin` und `member`, inklusive Admin-Seite zum Anlegen, Entfernen und Verwalten von Mitgliedern
 - QR-Code pro Rolle, der direkt zur Detailseite fuehrt
 - Warnsystem ab unter 150 g und automatischer Status `leer` bei 0 g
 - PWA Manifest, Service Worker und App-Icons
@@ -93,12 +93,28 @@ Die Migration erstellt:
 - Trigger fuer `updated_at`, Profilanlage, Kostenberechnung, Restgewicht, Leerstatus und Aktivitaetslog
 - Explizite Data-API-Grants fuer `authenticated`
 - RLS-Policies: eingeloggte Nutzer lesen alle Daten; nur eingeloggte Nutzer schreiben Rollen und Verbraeuche; nur Admins duerfen Benutzerrollen aendern
+- Admin-RPCs fuer Mitgliedsanlage und Mitgliedsentfernung ohne Service-Role-Key im Frontend
 
 ## Benutzerrollen
 
-Neue Nutzer starten als `member`. Ein `admin` sieht den Admin-Bereich in der Navigation und kann dort andere Profile auf `admin` oder `member` setzen. Rollen werden in `profiles.role` gespeichert, nicht in user-editierbaren Auth-Metadaten.
+Neue Nutzer starten als `member`. Ein `admin` sieht den Admin-Bereich in der Navigation und kann dort Mitglieder anlegen, entfernen und andere Profile auf `admin` oder `member` setzen. Rollen werden in `profiles.role` gespeichert, nicht in user-editierbaren Auth-Metadaten.
 
 Wichtig: Mindestens ein Admin sollte erhalten bleiben. Die Migration verhindert, dass der letzte Admin entfernt wird.
+
+Beim Entfernen eines Mitglieds werden historische Rollen- und Verbrauchsbezuege dem ausfuehrenden Admin zugeordnet. So bleiben Bestand, Verbrauch und Kostenberichte lesbar, ohne tote Profilreferenzen zu behalten.
+
+## Bambu Lab Integration
+
+Eine Bambu-Lab-Anbindung ist moeglich, sollte aber nicht direkt aus der Vercel-PWA zum Drucker laufen. Bambu-Drucker stehen typischerweise im lokalen Netzwerk, und Bambu Farm Manager/Bambu Connect arbeiten LAN-orientiert. Supabase Edge Functions und Vercel Functions koennen lokale Drucker im Heim- oder Werkstattnetz nicht direkt erreichen.
+
+Empfohlener Weg:
+
+1. Lokaler Bridge-Dienst im selben Netzwerk wie die Drucker.
+2. Bridge liest Druckerstatus, Jobstatus, Temperaturen, AMS/Filament-Slots und ggf. Verbrauchsdaten.
+3. Bridge schreibt nur normalisierte Statusdaten in Supabase, z. B. in Tabellen `printers`, `printer_status_events` und `ams_slots`.
+4. FilamentVault zeigt diese Daten im Dashboard und kann Rollen mit AMS-Slots verknuepfen.
+
+Wichtig: Drucker-Seriennummern, Access Codes oder Cloud-Zugangsdaten gehoeren nicht ins Frontend und nicht in `VITE_` Env Vars.
 
 ## Build
 

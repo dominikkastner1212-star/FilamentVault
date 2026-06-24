@@ -6,6 +6,14 @@ type ActivityPageProps = {
 };
 
 function readableAction(action: string) {
+  if (action === 'profile_created') {
+    return 'Mitglied angelegt';
+  }
+
+  if (action === 'profile_deleted') {
+    return 'Mitglied entfernt';
+  }
+
   if (action === 'profile_role_updated') {
     return 'Benutzerrolle geändert';
   }

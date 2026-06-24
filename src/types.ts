@@ -84,6 +84,13 @@ export type UsageFormValues = {
   note: string;
 };
 
+export type MemberFormValues = {
+  email: string;
+  full_name: string;
+  password: string;
+  role: AppRole;
+};
+
 export type SettlementRow = {
   profile: Profile;
   purchased: number;
