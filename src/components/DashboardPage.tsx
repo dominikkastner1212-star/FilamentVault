@@ -1,6 +1,7 @@
 import { Activity, AlertTriangle, Boxes, ReceiptText, Scale, TrendingUp } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import { buildSettlementRows, lowStockRolls, materialStock, totalStock, usageCost } from '../lib/analytics';
+import { filamentStyleVars } from '../lib/filamentColor';
 import { displayName, formatCurrency, formatDateTime, formatGrams, formatKg } from '../lib/format';
 import { ActivityLog, FilamentRoll, FilamentUsage, Profile } from '../types';
 
@@ -179,8 +180,14 @@ export function DashboardPage({ profiles, rolls, usage, activity, onAddUsage }: 
         <div className="compact-list critical-list">
           {low.length ? (
             low.slice(0, 5).map((roll) => (
-              <button type="button" key={roll.id} className="compact-row actionable" onClick={() => onAddUsage(roll.id)}>
-                <span className="material-dot" data-material={roll.material} />
+              <button
+                type="button"
+                key={roll.id}
+                className="compact-row actionable"
+                style={filamentStyleVars(roll.color) as CSSProperties}
+                onClick={() => onAddUsage(roll.id)}
+              >
+                <span className="filament-spool small" aria-hidden="true" />
                 <div>
                   <strong>{roll.manufacturer} - {roll.color}</strong>
                   <small>{roll.material} - {roll.storage_location}</small>

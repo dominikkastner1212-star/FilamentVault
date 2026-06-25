@@ -2,6 +2,7 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Copy, Edit3, MapPin, QrCode as QrIcon, Scale, Trash2 } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import { QrCode } from './QrCode';
+import { filamentStyleVars } from '../lib/filamentColor';
 import { getAppBaseUrl } from '../lib/supabase';
 import { displayName, formatCurrency, formatDate, formatGrams } from '../lib/format';
 import { FilamentRoll, FilamentUsage } from '../types';
@@ -65,7 +66,7 @@ export function RollDetailPage({ rolls, usage, onEdit, onDuplicate, onAddUsage, 
           Rollen
         </Link>
 
-        <div className="roll-profile-hero">
+        <div className="roll-profile-hero" style={filamentStyleVars(roll.color) as CSSProperties}>
           <div className="roll-profile-copy">
             <span className={`status-chip status-${statusClass(roll)}`}>{statusLabel(roll)}</span>
             <h2>{roll.manufacturer} - {roll.color}</h2>
@@ -93,7 +94,7 @@ export function RollDetailPage({ rolls, usage, onEdit, onDuplicate, onAddUsage, 
           </div>
 
           <div className="roll-profile-visual">
-            <span className="spool-orb large" data-material={roll.material}>
+            <span className="spool-orb large" aria-hidden="true">
               <i>{roll.material}</i>
             </span>
             <div className="remaining-ring large" style={{ '--remaining': `${fill * 3.6}deg` } as CSSProperties}>
@@ -161,7 +162,7 @@ export function RollDetailPage({ rolls, usage, onEdit, onDuplicate, onAddUsage, 
             {rollUsage.length ? (
               rollUsage.map((entry) => (
                 <article className="timeline-row" key={entry.id}>
-                  <span className="material-dot" data-material={roll.material} />
+                  <span className="filament-spool small" style={filamentStyleVars(roll.color) as CSSProperties} aria-hidden="true" />
                   <div>
                     <strong>{entry.project_name}</strong>
                     <p>{displayName(entry.user)} - {entry.note || 'Keine Notiz'}</p>

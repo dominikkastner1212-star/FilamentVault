@@ -1,8 +1,8 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Sora:wght@600;700;800&display=swap');
 
 :root {
   font-family:
-    "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: #162023;
   background: #f7faf7;
   font-synthesis: none;
@@ -36,8 +36,8 @@
   --shadow-soft: 0 18px 48px rgba(28, 32, 35, 0.08);
   --shadow-lift: 0 28px 64px rgba(28, 32, 35, 0.13);
   --green-glow: 0 0 0 1px rgba(57, 217, 138, 0.28), 0 20px 70px rgba(17, 155, 93, 0.2);
-  --font-display: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-ui: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-display: "Sora", "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-ui: "Manrope", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --radius: 18px;
   --radius-lg: 18px;
   --radius-xl: 22px;
@@ -333,43 +333,84 @@ button:disabled {
   overflow: hidden;
   width: 56px;
   height: 56px;
-  border-radius: 8px;
+  border-radius: 18px;
   display: grid;
   place-items: center;
   color: #f6fff9;
   background:
-    radial-gradient(circle at 50% 50%, #d7ffe7 0 14%, transparent 15%),
-    conic-gradient(from 20deg, #39d98a, #a7f06e, #f5fff8, #2d3432, #39d98a);
+    linear-gradient(145deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0.04)),
+    linear-gradient(150deg, #1d2728, #101719);
+  border: 1px solid rgba(255, 255, 255, 0.16);
   box-shadow:
-    inset 0 0 0 14px rgba(28, 32, 35, 0.92),
-    0 14px 34px rgba(17, 155, 93, 0.26);
-  font-size: 0.86rem;
-  letter-spacing: 0;
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 16px 38px rgba(17, 155, 93, 0.24);
+}
+
+.brand-mark::before {
+  content: '';
+  position: absolute;
+  inset: 9px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(16, 23, 25, 0.96) 0 23%, transparent 24% 37%, rgba(255, 255, 255, 0.36) 38% 43%, transparent 44%),
+    conic-gradient(from -24deg, #39d98a, #9bf06d 30%, #eafff3 42%, #29bd78 62%, #0f6f45 82%, #39d98a);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    0 0 28px rgba(57, 217, 138, 0.26);
+  pointer-events: none;
 }
 
 .brand-mark::after {
   content: '';
   position: absolute;
-  inset: -42%;
-  border-radius: inherit;
-  background: conic-gradient(from 0deg, transparent, rgba(255, 255, 255, 0.68), rgba(57, 217, 138, 0.34), transparent 38%);
-  animation: vault-orbit 5.5s linear infinite;
-  mix-blend-mode: screen;
+  width: 46%;
+  height: 18%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.16));
+  translate: 16% -120%;
+  rotate: -24deg;
+  opacity: 0.72;
+  animation: vault-sheen 6.4s ease-in-out infinite;
   pointer-events: none;
 }
 
-.brand-mark > *,
-.brand-mark {
-  isolation: isolate;
+.brand-mark > span {
+  position: relative;
+  z-index: 1;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: #f5fff8;
+  box-shadow:
+    0 0 0 5px rgba(16, 23, 25, 0.84),
+    0 0 0 6px rgba(255, 255, 255, 0.16);
 }
 
 .brand-mark.small {
   width: 36px;
   height: 36px;
-  font-size: 0.68rem;
+  border-radius: 12px;
   box-shadow:
-    inset 0 0 0 9px rgba(28, 32, 35, 0.92),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
     0 10px 28px rgba(17, 155, 93, 0.24);
+}
+
+.brand-mark.small::before {
+  inset: 6px;
+}
+
+.brand-mark.small > span {
+  width: 7px;
+  height: 7px;
+  box-shadow:
+    0 0 0 3px rgba(16, 23, 25, 0.84),
+    0 0 0 4px rgba(255, 255, 255, 0.16);
+}
+
+.brand-mark-large {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
 }
 
 .nav-list {
@@ -1125,14 +1166,21 @@ button:disabled {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent-strong), var(--accent), #a7f06e);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--filament-color, var(--accent-strong)), #162023 10%),
+      var(--filament-color, var(--accent)),
+      color-mix(in srgb, var(--filament-color, #a7f06e), white 20%)
+    );
+  box-shadow: 0 0 16px color-mix(in srgb, var(--filament-color, var(--accent)), transparent 70%);
   transform-origin: left center;
   animation: vault-bar 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .compact-row {
   width: 100%;
-  grid-template-columns: 26px 1fr auto;
+  grid-template-columns: 34px 1fr auto;
   padding: 11px 0;
   border-bottom: 1px solid var(--line);
   color: inherit;
@@ -1208,6 +1256,59 @@ button:disabled {
 
 .material-dot[data-material='ABS'] {
   background: var(--mat-abs);
+}
+
+.filament-spool {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 31px;
+  height: 31px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.92) 0 12%, transparent 13% 24%, rgba(255, 255, 255, 0.28) 25% 34%, transparent 35%),
+    conic-gradient(
+      from -20deg,
+      var(--filament-color, var(--accent)),
+      color-mix(in srgb, var(--filament-color, var(--accent)), white 28%),
+      var(--filament-color, var(--accent))
+    );
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.52),
+    inset 0 0 0 7px color-mix(in srgb, var(--filament-color, var(--accent)), white 8%),
+    0 10px 24px color-mix(in srgb, var(--filament-color, var(--accent)), transparent 68%);
+}
+
+.filament-spool::before,
+.filament-spool::after {
+  content: '';
+  position: absolute;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.58);
+  pointer-events: none;
+}
+
+.filament-spool::before {
+  width: 56%;
+  height: 14%;
+  top: 22%;
+  left: 22%;
+  rotate: -18deg;
+  opacity: 0.7;
+}
+
+.filament-spool::after {
+  width: 24%;
+  height: 24%;
+  inset: 38%;
+  background: rgba(16, 23, 25, 0.76);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.22);
+}
+
+.filament-spool.small {
+  width: 28px;
+  height: 28px;
 }
 
 .person-row {
@@ -1388,6 +1489,10 @@ textarea:focus {
   display: flex;
   align-items: center;
   gap: 11px;
+}
+
+.roll-card-head {
+  align-items: center;
 }
 
 .status-chip {
@@ -1899,19 +2004,24 @@ label {
 .material-donut,
 .remaining-ring {
   --donut: var(--line) 0 100%;
+  --ring-size: 156px;
+  --ring-thickness: 18px;
+  --ring-track: rgba(28, 32, 35, 0.08);
   position: relative;
   z-index: 1;
-  width: 156px;
+  isolation: isolate;
+  width: var(--ring-size);
   aspect-ratio: 1;
-  display: grid;
-  place-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
   border-radius: 50%;
-  background:
-    radial-gradient(circle, rgba(255, 255, 255, 0.9) 0 52%, transparent 53%),
-    conic-gradient(var(--donut));
+  background: radial-gradient(circle at 50% 47%, rgba(255, 255, 255, 0.94), rgba(240, 250, 245, 0.76) 62%, rgba(255, 255, 255, 0.56));
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.78),
-    0 24px 56px rgba(16, 20, 23, 0.14);
+    0 22px 54px rgba(16, 20, 23, 0.12);
 }
 
 .material-donut::before {
@@ -1926,16 +2036,36 @@ label {
   animation: vault-glow 6s ease-in-out infinite;
 }
 
+.material-donut::after,
+.remaining-ring::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+  mask: radial-gradient(farthest-side, transparent calc(100% - var(--ring-thickness) - 1px), #000 calc(100% - var(--ring-thickness)));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--ring-thickness) - 1px), #000 calc(100% - var(--ring-thickness)));
+}
+
+.material-donut::after {
+  background: conic-gradient(var(--donut));
+}
+
 .material-donut strong,
 .remaining-ring strong {
+  position: relative;
+  z-index: 1;
   color: var(--ink);
-  font-size: 1.16rem;
+  font-family: var(--font-display);
+  font-size: 1.12rem;
   line-height: 1;
 }
 
 .material-donut span,
 .remaining-ring span {
-  margin-top: 4px;
+  position: relative;
+  z-index: 1;
   color: var(--muted);
   font-size: 0.72rem;
   font-weight: 760;
@@ -2115,7 +2245,7 @@ label {
 .roll-list-item {
   width: 100%;
   display: grid;
-  grid-template-columns: 20px minmax(0, 1fr) auto;
+  grid-template-columns: 32px minmax(0, 1fr) auto;
   align-items: center;
   gap: 12px;
   padding: 12px;
@@ -2131,8 +2261,9 @@ label {
 
 .roll-list-item:hover,
 .roll-list-item.selected {
-  background: rgba(255, 255, 255, 0.82);
-  box-shadow: 0 14px 34px rgba(17, 155, 93, 0.12);
+  background:
+    linear-gradient(90deg, color-mix(in srgb, var(--filament-color, var(--accent)), transparent 90%), rgba(255, 255, 255, 0.82));
+  box-shadow: 0 14px 34px color-mix(in srgb, var(--filament-color, var(--accent)), transparent 86%);
   transform: translateY(-1px);
 }
 
@@ -2161,7 +2292,14 @@ label {
   display: block;
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--accent-strong), var(--accent), #a7f06e);
+  background:
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--filament-color, var(--accent-strong)), #142023 10%),
+      var(--filament-color, var(--accent)),
+      color-mix(in srgb, var(--filament-color, #a7f06e), white 18%)
+    );
+  box-shadow: 0 0 14px color-mix(in srgb, var(--filament-color, var(--accent)), transparent 72%);
   transform-origin: left center;
   animation: vault-bar 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
@@ -2197,6 +2335,7 @@ label {
 }
 
 .spool-orb {
+  --filament-color: var(--accent);
   width: 62px;
   height: 62px;
   display: grid;
@@ -2205,10 +2344,10 @@ label {
   color: #ffffff;
   background:
     radial-gradient(circle, rgba(255, 255, 255, 0.72) 0 16%, transparent 17% 34%, rgba(255, 255, 255, 0.32) 35% 46%, transparent 47%),
-    var(--mat-pla);
+    var(--filament-color);
   box-shadow:
     inset 0 0 0 7px rgba(255, 255, 255, 0.34),
-    0 16px 38px rgba(17, 155, 93, 0.16);
+    0 16px 38px color-mix(in srgb, var(--filament-color), transparent 72%);
   animation: vault-breathe 4.8s ease-in-out infinite;
 }
 
@@ -2262,24 +2401,33 @@ label {
 
 .remaining-ring {
   --remaining: 0deg;
+  --ring-size: 188px;
+  --ring-thickness: 16px;
   width: 188px;
-  background:
-    radial-gradient(circle, rgba(255, 255, 255, 0.88) 0 54%, transparent 55%),
-    conic-gradient(var(--accent-strong) 0 var(--remaining), rgba(28, 32, 35, 0.08) var(--remaining) 360deg);
+  background: radial-gradient(circle at 50% 47%, rgba(255, 255, 255, 0.94), rgba(246, 252, 249, 0.8) 62%, rgba(255, 255, 255, 0.58));
+}
+
+.remaining-ring::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  z-index: -2;
+  border-radius: 50%;
+  background: conic-gradient(var(--filament-color, var(--accent)) 0 var(--remaining), transparent var(--remaining) 360deg);
+  filter: blur(18px);
+  opacity: 0.26;
+}
+
+.remaining-ring::after {
+  background: conic-gradient(
+    var(--filament-color, var(--accent-strong)) 0 var(--remaining),
+    var(--ring-track) var(--remaining) 360deg
+  );
 }
 
 .remaining-ring.large {
+  --ring-size: 168px;
   width: 168px;
-}
-
-.remaining-ring > * {
-  grid-column: 1;
-  grid-row: 1;
-}
-
-.remaining-ring span {
-  align-self: end;
-  padding-bottom: 48px;
 }
 
 .inspector-foot {
@@ -3578,7 +3726,7 @@ input[type='range'] {
     align-items: center;
   }
 
-  .app-brand span:not(.brand-mark),
+  .app-brand > span:not(.brand-mark),
   .nav-link span,
   .nav-link i,
   .sidebar-footer {
@@ -3700,8 +3848,11 @@ input[type='range'] {
   }
 
   .material-donut {
-    width: 118px;
-    justify-self: start;
+    --ring-size: 126px;
+    --ring-thickness: 15px;
+    width: 126px;
+    justify-self: center;
+    margin-top: 4px;
   }
 
   .page-grid {

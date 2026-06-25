@@ -53,7 +53,9 @@ export function AuthView({ authMessage, onSignIn, onSignUp, onDemo }: AuthViewPr
     <main className="auth-page">
       <section className="auth-visual" aria-label="FilamentVault">
         <div className="brand-lockup">
-          <div className="brand-mark">FV</div>
+          <div className="brand-mark" aria-hidden="true">
+            <span />
+          </div>
           <div>
             <h1>FilamentVault</h1>
             <p>Gemeinsame Filamentverwaltung für kleine 3D-Drucker-Gruppen.</p>

@@ -62,7 +62,9 @@ export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onS
     <div className="app-shell">
       <aside className="sidebar">
         <NavLink to="/" className="app-brand" aria-label="FilamentVault Dashboard">
-          <span className="brand-mark small">FV</span>
+          <span className="brand-mark small" aria-hidden="true">
+            <span />
+          </span>
           <span>FilamentVault</span>
         </NavLink>
         <nav className="nav-list" aria-label="Hauptnavigation">

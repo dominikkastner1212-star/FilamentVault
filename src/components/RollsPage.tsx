@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { Copy, Edit3, QrCode, Search, Scale, Trash2, Weight } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { filamentStyleVars } from '../lib/filamentColor';
 import { displayName, formatCurrency, formatDate, formatGrams } from '../lib/format';
 import { FilamentRoll, FilamentUsage } from '../types';
 
@@ -143,9 +144,10 @@ export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDe
                   type="button"
                   className={isSelected ? 'roll-list-item selected' : 'roll-list-item'}
                   key={roll.id}
+                  style={filamentStyleVars(roll.color) as CSSProperties}
                   onClick={() => setSelectedRollId(roll.id)}
                 >
-                  <span className="material-dot" data-material={roll.material} />
+                  <span className="filament-spool small" aria-hidden="true" />
                   <div>
                     <strong>{roll.manufacturer} - {roll.color}</strong>
                     <small>{roll.material} - {roll.storage_location} - {rollUsage.length} Verbräuche</small>
@@ -165,7 +167,7 @@ export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDe
         {selectedRoll ? (
           <aside className="roll-inspector">
             <div className="roll-inspector-head">
-              <span className="spool-orb" data-material={selectedRoll.material}>
+              <span className="spool-orb" style={filamentStyleVars(selectedRoll.color) as CSSProperties} aria-hidden="true">
                 <i>{selectedRoll.material}</i>
               </span>
               <div>
@@ -175,7 +177,15 @@ export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDe
               <span className={`status-chip status-${statusClass(selectedRoll)}`}>{statusLabel(selectedRoll)}</span>
             </div>
 
-            <div className="remaining-ring" style={{ '--remaining': `${remainingPercent(selectedRoll) * 3.6}deg` } as CSSProperties}>
+            <div
+              className="remaining-ring"
+              style={
+                {
+                  ...filamentStyleVars(selectedRoll.color),
+                  '--remaining': `${remainingPercent(selectedRoll) * 3.6}deg`
+                } as CSSProperties
+              }
+            >
               <strong>{formatGrams(selectedRoll.remaining_weight_g)}</strong>
               <span>von {formatGrams(selectedRoll.original_weight_g)}</span>
             </div>
@@ -234,10 +244,14 @@ export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDe
 
       <div className="roll-card-list">
         {filteredRolls.map((roll) => (
-          <article className="roll-card compact-roll-card" key={roll.id}>
+          <article
+            className="roll-card compact-roll-card"
+            key={roll.id}
+            style={filamentStyleVars(roll.color) as CSSProperties}
+          >
             <div className="roll-card-head">
               <Link to={`/rolls/${roll.id}`} className="roll-link">
-                <span className="material-dot" data-material={roll.material} />
+                <span className="filament-spool small" aria-hidden="true" />
                 <div>
                   <strong>{roll.manufacturer}</strong>
                   <small>{roll.material} - {roll.color}</small>

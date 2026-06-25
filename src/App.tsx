@@ -26,7 +26,9 @@ type Toast = {
 function LoadingScreen() {
   return (
     <main className="loading-screen">
-      <div className="brand-mark">FV</div>
+      <div className="brand-mark brand-mark-large" aria-hidden="true">
+        <span />
+      </div>
       <h1>FilamentVault</h1>
       <p>Bestand wird geladen.</p>
     </main>
