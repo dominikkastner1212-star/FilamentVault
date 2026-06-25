@@ -6,11 +6,12 @@ import { QrCode } from './QrCode';
 import { filamentStyleVars } from '../lib/filamentColor';
 import { getAppBaseUrl } from '../lib/supabase';
 import { displayName, formatCurrency, formatDate, formatGrams } from '../lib/format';
-import { FilamentRoll, FilamentUsage } from '../types';
+import { FilamentRoll, FilamentUsage, MaterialProfileRecord } from '../types';
 
 type RollDetailPageProps = {
   rolls: FilamentRoll[];
   usage: FilamentUsage[];
+  materialProfiles: MaterialProfileRecord[];
   onEdit: (roll: FilamentRoll) => void;
   onDuplicate: (roll: FilamentRoll) => void;
   onAddUsage: (rollId: string) => void;
@@ -28,7 +29,15 @@ function statusClass(roll: FilamentRoll) {
   return statusLabel(roll).toLowerCase();
 }
 
-export function RollDetailPage({ rolls, usage, onEdit, onDuplicate, onAddUsage, onDelete }: RollDetailPageProps) {
+export function RollDetailPage({
+  rolls,
+  usage,
+  materialProfiles,
+  onEdit,
+  onDuplicate,
+  onAddUsage,
+  onDelete
+}: RollDetailPageProps) {
   const { rollId } = useParams();
   const navigate = useNavigate();
   const roll = rolls.find((item) => item.id === rollId);
@@ -124,7 +133,12 @@ export function RollDetailPage({ rolls, usage, onEdit, onDuplicate, onAddUsage, 
           </div>
         </div>
 
-        <MaterialProfileCard material={roll.material} color={roll.color} notes={roll.notes} />
+        <MaterialProfileCard
+          material={roll.material}
+          color={roll.color}
+          notes={roll.notes}
+          syncedProfiles={materialProfiles}
+        />
 
         <section className="panel inset-panel">
           <div className="panel-header">

@@ -1989,6 +1989,27 @@ label {
   border-color: rgba(183, 121, 31, 0.22);
 }
 
+.material-source-row,
+.technical-profile-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.material-source-row span,
+.technical-profile-strip span {
+  min-height: 26px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 999px;
+  color: var(--muted);
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid var(--line);
+  font-size: 0.72rem;
+  font-weight: 760;
+}
+
 .material-profile-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -2031,6 +2052,40 @@ label {
   gap: 5px;
   margin: 0;
   padding-left: 16px;
+}
+
+.technical-profile-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+}
+
+.technical-profile-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--line);
+}
+
+.technical-profile-list div:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.technical-profile-list dt {
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 720;
+}
+
+.technical-profile-list dd {
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 820;
+  text-align: right;
 }
 
 .material-profile-card p {

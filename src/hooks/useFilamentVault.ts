@@ -7,6 +7,7 @@ import {
   AppRole,
   FilamentRoll,
   FilamentUsage,
+  MaterialProfileRecord,
   MemberFormValues,
   Printer,
   PrinterStatus,
@@ -21,6 +22,7 @@ type VaultState = {
   usage: FilamentUsage[];
   printers: Printer[];
   printerStatus: PrinterStatus[];
+  materialProfiles: MaterialProfileRecord[];
   activity: ActivityLog[];
   loading: boolean;
   error: string | null;
@@ -107,6 +109,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
   const [printerStatus, setPrinterStatus] = useState<PrinterStatus[]>(
     demoSnapshot?.printerStatus || attachPrinterStatusRelations(demoPrinterStatus, demoPrinters)
   );
+  const [materialProfiles, setMaterialProfiles] = useState<MaterialProfileRecord[]>([]);
   const [activity, setActivity] = useState<ActivityLog[]>(
     demoSnapshot?.activity || attachActivityRelations(demoActivity, demoProfiles)
   );
@@ -134,7 +137,15 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
     setLoading(true);
     setError(null);
 
-    const [profilesResult, rollsResult, usageResult, printersResult, printerStatusResult, activityResult] = await Promise.all([
+    const [
+      profilesResult,
+      rollsResult,
+      usageResult,
+      printersResult,
+      printerStatusResult,
+      materialProfilesResult,
+      activityResult
+    ] = await Promise.all([
       supabase.from('profiles').select('*').order('full_name', { ascending: true }),
       supabase
         .from('filament_rolls')
@@ -152,6 +163,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
         .select('*, printer:printers!printer_status_printer_id_fkey(id, name, model, serial, provider, location)')
         .order('recorded_at', { ascending: false })
         .limit(120),
+      supabase.from('material_profiles').select('*').order('material_key', { ascending: true }),
       supabase
         .from('activity_log')
         .select('*, actor:profiles!activity_log_actor_id_fkey(id, full_name, email)')
@@ -177,6 +189,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
     setUsage((usageResult.data || []) as FilamentUsage[]);
     setPrinters((printersResult.data || []) as Printer[]);
     setPrinterStatus((printerStatusResult.data || []) as PrinterStatus[]);
+    setMaterialProfiles(materialProfilesResult.error ? [] : ((materialProfilesResult.data || []) as MaterialProfileRecord[]));
     setActivity((activityResult.data || []) as ActivityLog[]);
     setLoading(false);
   }, [currentProfile, isDemo]);
@@ -590,6 +603,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       usage,
       printers,
       printerStatus,
+      materialProfiles,
       activity: sortByCreatedAt(activity),
       loading,
       error,
@@ -613,6 +627,7 @@ export function useFilamentVault(currentProfile: Profile | null, isDemo: boolean
       error,
       loading,
       markRollEmpty,
+      materialProfiles,
       printerStatus,
       printers,
       profiles,

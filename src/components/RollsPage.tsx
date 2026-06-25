@@ -6,11 +6,12 @@ import { MaterialProfileCard } from './MaterialProfileCard';
 import { filamentStyleVars } from '../lib/filamentColor';
 import { detectAbrasiveMaterial } from '../lib/materialProfiles';
 import { displayName, formatCurrency, formatDate, formatGrams } from '../lib/format';
-import { FilamentRoll, FilamentUsage } from '../types';
+import { FilamentRoll, FilamentUsage, MaterialProfileRecord } from '../types';
 
 type RollsPageProps = {
   rolls: FilamentRoll[];
   usage: FilamentUsage[];
+  materialProfiles: MaterialProfileRecord[];
   onEdit: (roll: FilamentRoll) => void;
   onDuplicate: (roll: FilamentRoll) => void;
   onMarkEmpty: (roll: FilamentRoll) => void;
@@ -45,7 +46,16 @@ function abrasiveClass(roll: FilamentRoll) {
   return detectAbrasiveMaterial(roll).isAbrasive ? 'abrasive-chip abrasive-chip-warning' : 'abrasive-chip';
 }
 
-export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDelete, onAddUsage }: RollsPageProps) {
+export function RollsPage({
+  rolls,
+  usage,
+  materialProfiles,
+  onEdit,
+  onDuplicate,
+  onMarkEmpty,
+  onDelete,
+  onAddUsage
+}: RollsPageProps) {
   const [query, setQuery] = useState('');
   const [material, setMaterial] = useState('alle');
   const [status, setStatus] = useState('alle');
@@ -219,6 +229,7 @@ export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDe
               material={selectedRoll.material}
               color={selectedRoll.color}
               notes={selectedRoll.notes}
+              syncedProfiles={materialProfiles}
               variant="compact"
             />
 

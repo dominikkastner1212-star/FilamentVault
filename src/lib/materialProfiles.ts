@@ -1,3 +1,5 @@
+import type { MaterialProfileRecord } from '../types';
+
 export type MaterialProfile = {
   key: string;
   label: string;
@@ -6,6 +8,7 @@ export type MaterialProfile = {
   printNotes: string[];
   baseAbrasive: boolean;
   baseAbrasiveHint: string;
+  synced?: MaterialProfileRecord | null;
 };
 
 export type AbrasiveInfo = {
@@ -123,17 +126,29 @@ function normalizeSearch(value: string) {
     .replace(/\u00df/g, 'ss');
 }
 
-export function getMaterialProfile(material: string): MaterialProfile {
+function syncedForMaterial(material: string, syncedProfiles: MaterialProfileRecord[] = []) {
   const normalized = normalize(material);
+  return syncedProfiles.find((profile) => {
+    const key = normalize(profile.material_key);
+    if (normalized.includes('PLA+') && key === 'PLA+') return true;
+    if (normalized.includes('PLA') && !normalized.includes('PLA+') && key === 'PLA') return true;
+    return normalized.includes(key);
+  });
+}
 
-  if (normalized.includes('PLA+')) return MATERIAL_PROFILES['PLA+'];
-  if (normalized.includes('PLA')) return MATERIAL_PROFILES.PLA;
-  if (normalized.includes('PETG')) return MATERIAL_PROFILES.PETG;
-  if (normalized.includes('ASA')) return MATERIAL_PROFILES.ASA;
-  if (normalized.includes('TPU') || normalized.includes('FLEX')) return MATERIAL_PROFILES.TPU;
-  if (normalized.includes('ABS')) return MATERIAL_PROFILES.ABS;
+export function getMaterialProfile(material: string, syncedProfiles: MaterialProfileRecord[] = []): MaterialProfile {
+  const normalized = normalize(material);
+  const synced = syncedForMaterial(material, syncedProfiles) || null;
+  const withSynced = (profile: MaterialProfile) => ({ ...profile, synced });
 
-  return { ...GENERIC_PROFILE, label: material || GENERIC_PROFILE.label };
+  if (normalized.includes('PLA+')) return withSynced(MATERIAL_PROFILES['PLA+']);
+  if (normalized.includes('PLA')) return withSynced(MATERIAL_PROFILES.PLA);
+  if (normalized.includes('PETG')) return withSynced(MATERIAL_PROFILES.PETG);
+  if (normalized.includes('ASA')) return withSynced(MATERIAL_PROFILES.ASA);
+  if (normalized.includes('TPU') || normalized.includes('FLEX')) return withSynced(MATERIAL_PROFILES.TPU);
+  if (normalized.includes('ABS')) return withSynced(MATERIAL_PROFILES.ABS);
+
+  return withSynced({ ...GENERIC_PROFILE, label: material || GENERIC_PROFILE.label });
 }
 
 export function detectAbrasiveMaterial(input: {

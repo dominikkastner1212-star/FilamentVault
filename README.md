@@ -12,6 +12,7 @@ FilamentVault ist eine mobile-first PWA fuer die gemeinsame Filamentverwaltung e
 - Druckauftrag-Kalkulator fuer Verkaufspreise mit Material, Maschinenzeit, Energie, Arbeit, Marge und MwSt.
 - Benutzerrollen: `admin` und `member`, inklusive Admin-Seite zum Anlegen, Entfernen und Verwalten von Mitgliedern
 - Reines Drucker-Monitoring fuer Status, Fortschritt, Temperaturen, Layer und AMS-Rohdaten
+- Materialprofile mit lokalen Fallbacks und optionalem Internet-Sync aus BambuStudio-Profilen
 - QR-Code pro Rolle, der direkt zur Detailseite fuehrt
 - Warnsystem ab unter 150 g und automatischer Status `leer` bei 0 g
 - PWA Manifest, Service Worker und App-Icons
@@ -91,6 +92,8 @@ Die Migration erstellt:
 - `filament_usage`
 - `printers`
 - `printer_status`
+- `material_profiles`
+- `material_profile_sync_runs`
 - `activity_log`
 - Enum-Typen fuer Material, Rollenstatus und App-Rollen
 - Trigger fuer `updated_at`, Profilanlage, Kostenberechnung, Restgewicht, Leerstatus und Aktivitaetslog
@@ -157,6 +160,34 @@ curl -X POST https://your-domain.vercel.app/api/printer-status \
   }'
 ```
 
+## Materialprofil-Sync
+
+FilamentVault kann Materialdaten aus oeffentlichen BambuStudio-Filamentprofilen cachen. Die App nutzt diese Online-Werte fuer technische Hinweise wie Dichte, Flow, Drucktemperaturen, Bett-Temperaturen und Volumetric Speed. Anwendungsbereiche und Abrasiv-Regeln bleiben lokal als stabiler Fallback erhalten.
+
+Architektur:
+
+1. Vercel Cron ruft taeglich `/api/sync-material-profiles` auf.
+2. Die API-Route liest oeffentliche BambuStudio-Profile von GitHub.
+3. Die Route normalisiert PLA, PLA+, PETG, ASA, TPU und ABS.
+4. Supabase speichert die Werte in `material_profiles`.
+5. Das Frontend zeigt Online-Werte mit Quelle und Sync-Datum an; ohne Daten nutzt es lokale Fallbacks.
+
+Zusaetzliche Server-Env fuer Vercel:
+
+```text
+MATERIAL_PROFILE_SYNC_KEY=generate-another-long-random-secret
+CRON_SECRET=optional-same-or-vercel-cron-secret
+```
+
+Manueller Sync:
+
+```bash
+curl https://your-domain.vercel.app/api/sync-material-profiles \
+  -H "authorization: Bearer $MATERIAL_PROFILE_SYNC_KEY"
+```
+
+Quelle: `https://github.com/bambulab/BambuStudio/tree/master/resources/profiles/BBL/filament`
+
 ## Build
 
 ```bash
@@ -177,6 +208,11 @@ Der Build fuehrt TypeScript-Pruefung und Vite-Bundling aus.
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_PUBLISHABLE_KEY`
    - `VITE_APP_BASE_URL`
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_ROLE_KEY`
+   - `PRINTER_INGEST_KEY`
+   - `MATERIAL_PROFILE_SYNC_KEY`
+   - optional `CRON_SECRET`
 
 `vercel.json` leitet SPA-Routen auf `index.html` um.
 

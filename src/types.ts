@@ -84,6 +84,29 @@ export type PrinterStatus = {
   printer?: Pick<Printer, 'id' | 'name' | 'model' | 'serial' | 'provider' | 'location'> | null;
 };
 
+export type MaterialProfileRecord = {
+  material_key: string;
+  display_name: string;
+  source_name: string;
+  source_url: string | null;
+  source_profile_name: string | null;
+  source_profile_url: string | null;
+  source_license: string | null;
+  source_updated_at: string | null;
+  density_g_cm3: number | null;
+  filament_cost: number | null;
+  flow_ratio: number | null;
+  nozzle_temp_min: number | null;
+  nozzle_temp_max: number | null;
+  bed_temp_min: number | null;
+  bed_temp_max: number | null;
+  volumetric_speed: number | null;
+  description: string | null;
+  raw: Record<string, unknown>;
+  synced_at: string;
+  updated_at: string;
+};
+
 export type ActivityLog = {
   id: string;
   actor_id: string | null;

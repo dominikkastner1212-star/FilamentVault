@@ -2,12 +2,13 @@ import { FormEvent, useMemo, useState } from 'react';
 import { Save } from 'lucide-react';
 import { MaterialProfileCard } from './MaterialProfileCard';
 import { Modal } from './Modal';
-import { FilamentRoll, MATERIALS, Profile, ROLL_STATUSES, RollFormValues } from '../types';
+import { FilamentRoll, MATERIALS, MaterialProfileRecord, Profile, ROLL_STATUSES, RollFormValues } from '../types';
 
 type RollFormModalProps = {
   roll?: FilamentRoll | null;
   duplicateFrom?: FilamentRoll | null;
   profiles: Profile[];
+  materialProfiles: MaterialProfileRecord[];
   onClose: () => void;
   onSubmit: (values: RollFormValues) => Promise<void>;
 };
@@ -52,7 +53,7 @@ function validateRoll(values: RollFormValues) {
   return errors;
 }
 
-export function RollFormModal({ roll, duplicateFrom, profiles, onClose, onSubmit }: RollFormModalProps) {
+export function RollFormModal({ roll, duplicateFrom, profiles, materialProfiles, onClose, onSubmit }: RollFormModalProps) {
   const [values, setValues] = useState<RollFormValues>(() => initialValues(roll, profiles, duplicateFrom));
   const [errors, setErrors] = useState<string[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -145,6 +146,7 @@ export function RollFormModal({ roll, duplicateFrom, profiles, onClose, onSubmit
           material={values.material}
           color={values.color}
           notes={values.notes}
+          syncedProfiles={materialProfiles}
           variant="compact"
         />
 

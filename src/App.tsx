@@ -161,6 +161,7 @@ export default function App() {
               <RollsPage
                 rolls={vault.rolls}
                 usage={vault.usage}
+                materialProfiles={vault.materialProfiles}
                 onEdit={(roll) => setRollModal({ roll })}
                 onDuplicate={duplicateRoll}
                 onMarkEmpty={markRollEmpty}
@@ -175,6 +176,7 @@ export default function App() {
               <RollDetailPage
                 rolls={vault.rolls}
                 usage={vault.usage}
+                materialProfiles={vault.materialProfiles}
                 onEdit={(roll) => setRollModal({ roll })}
                 onDuplicate={duplicateRoll}
                 onAddUsage={openUsage}
@@ -209,6 +211,7 @@ export default function App() {
           roll={rollModal.roll}
           duplicateFrom={rollModal.duplicateFrom}
           profiles={vault.profiles}
+          materialProfiles={vault.materialProfiles}
           onClose={() => setRollModal(null)}
           onSubmit={submitRoll}
         />
