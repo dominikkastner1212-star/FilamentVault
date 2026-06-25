@@ -2,7 +2,9 @@ import { Link } from 'react-router-dom';
 import { Copy, Edit3, QrCode, Search, Scale, Trash2, Weight } from 'lucide-react';
 import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
+import { MaterialProfileCard } from './MaterialProfileCard';
 import { filamentStyleVars } from '../lib/filamentColor';
+import { detectAbrasiveMaterial } from '../lib/materialProfiles';
 import { displayName, formatCurrency, formatDate, formatGrams } from '../lib/format';
 import { FilamentRoll, FilamentUsage } from '../types';
 
@@ -37,6 +39,10 @@ function statusClass(roll: FilamentRoll) {
 
 function remainingPercent(roll: FilamentRoll) {
   return Math.max(0, Math.min(100, (roll.remaining_weight_g / roll.original_weight_g) * 100));
+}
+
+function abrasiveClass(roll: FilamentRoll) {
+  return detectAbrasiveMaterial(roll).isAbrasive ? 'abrasive-chip abrasive-chip-warning' : 'abrasive-chip';
 }
 
 export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDelete, onAddUsage }: RollsPageProps) {
@@ -209,6 +215,13 @@ export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDe
               </div>
             </div>
 
+            <MaterialProfileCard
+              material={selectedRoll.material}
+              color={selectedRoll.color}
+              notes={selectedRoll.notes}
+              variant="compact"
+            />
+
             <div className="detail-actions">
               <button type="button" className="primary-button" onClick={() => onAddUsage(selectedRoll.id)} disabled={selectedRoll.status === 'leer'}>
                 <Scale size={17} />
@@ -274,6 +287,7 @@ export function RollsPage({ rolls, usage, onEdit, onDuplicate, onMarkEmpty, onDe
               <span>{formatCurrency(roll.price)}</span>
               <span>{roll.storage_location}</span>
               <span>{displayName(roll.buyer)}</span>
+              <span className={abrasiveClass(roll)}>{detectAbrasiveMaterial(roll).label}</span>
             </div>
 
             <div className="row-actions">

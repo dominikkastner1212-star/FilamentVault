@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { Save } from 'lucide-react';
+import { MaterialProfileCard } from './MaterialProfileCard';
 import { Modal } from './Modal';
 import { FilamentRoll, MATERIALS, Profile, ROLL_STATUSES, RollFormValues } from '../types';
 
@@ -138,6 +139,14 @@ export function RollFormModal({ roll, duplicateFrom, profiles, onClose, onSubmit
           Farbe
           <input value={values.color} onChange={(event) => update('color', event.target.value)} />
         </label>
+
+        <MaterialProfileCard
+          className="form-grid-full"
+          material={values.material}
+          color={values.color}
+          notes={values.notes}
+          variant="compact"
+        />
 
         <label>
           Status

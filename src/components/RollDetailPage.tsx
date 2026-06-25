@@ -1,6 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Copy, Edit3, MapPin, QrCode as QrIcon, Scale, Trash2 } from 'lucide-react';
 import type { CSSProperties } from 'react';
+import { MaterialProfileCard } from './MaterialProfileCard';
 import { QrCode } from './QrCode';
 import { filamentStyleVars } from '../lib/filamentColor';
 import { getAppBaseUrl } from '../lib/supabase';
@@ -122,6 +123,8 @@ export function RollDetailPage({ rolls, usage, onEdit, onDuplicate, onAddUsage, 
             <strong>{formatCurrency(roll.price / roll.original_weight_g)}</strong>
           </div>
         </div>
+
+        <MaterialProfileCard material={roll.material} color={roll.color} notes={roll.notes} />
 
         <section className="panel inset-panel">
           <div className="panel-header">
