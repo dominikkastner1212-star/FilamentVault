@@ -572,6 +572,22 @@ button:disabled {
   transform: translateX(-2px);
 }
 
+.nav-link:active,
+.mobile-nav-link:active {
+  scale: 0.965;
+}
+
+.nav-link:focus-visible,
+.app-brand:focus-visible {
+  outline: 2px solid rgba(255, 246, 237, 0.85);
+  outline-offset: 2px;
+}
+
+.mobile-nav-link:focus-visible {
+  outline: 2px solid var(--accent-strong);
+  outline-offset: 2px;
+}
+
 .mobile-nav-link.active::before,
 .mobile-nav-link:hover::before {
   opacity: 1;
@@ -3870,7 +3886,7 @@ input[type='range'] {
   }
 
   .app-brand > span:not(.brand-mark),
-  .nav-link span,
+  .nav-link > span:not(.nav-icon),
   .nav-link i,
   .sidebar-footer {
     display: none;
