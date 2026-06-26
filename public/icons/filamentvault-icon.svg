@@ -1,10 +1,10 @@
 <svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="112" fill="#101417"/>
-  <circle cx="256" cy="256" r="154" fill="#E9EFED"/>
-  <circle cx="256" cy="256" r="96" fill="#101417"/>
-  <circle cx="256" cy="256" r="34" fill="#54C7B1"/>
-  <path d="M256 111C336.081 111 401 175.919 401 256" stroke="#54C7B1" stroke-width="34" stroke-linecap="round"/>
-  <path d="M111 256C111 175.919 175.919 111 256 111" stroke="#7BA8FF" stroke-width="34" stroke-linecap="round"/>
-  <path d="M401 256C401 336.081 336.081 401 256 401" stroke="#C9D2CF" stroke-width="34" stroke-linecap="round"/>
-  <path d="M256 401C175.919 401 111 336.081 111 256" stroke="#263136" stroke-width="34" stroke-linecap="round"/>
+  <rect width="512" height="512" rx="112" fill="#2B1D12"/>
+  <circle cx="256" cy="256" r="154" fill="#FBF1E0"/>
+  <circle cx="256" cy="256" r="96" fill="#2B1D12"/>
+  <circle cx="256" cy="256" r="34" fill="#E2641C"/>
+  <path d="M256 111C336.081 111 401 175.919 401 256" stroke="#E2641C" stroke-width="34" stroke-linecap="round"/>
+  <path d="M111 256C111 175.919 175.919 111 256 111" stroke="#CF9A1A" stroke-width="34" stroke-linecap="round"/>
+  <path d="M401 256C401 336.081 336.081 401 256 401" stroke="#D8C39A" stroke-width="34" stroke-linecap="round"/>
+  <path d="M256 401C175.919 401 111 336.081 111 256" stroke="#7A3309" stroke-width="34" stroke-linecap="round"/>
 </svg>
