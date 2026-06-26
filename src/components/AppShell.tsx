@@ -1,5 +1,5 @@
-import { ReactNode } from 'react';
-import { NavLink } from 'react-router-dom';
+import { CSSProperties, ReactNode } from 'react';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   Activity,
   Boxes,
@@ -26,16 +26,27 @@ type AppShellProps = {
 };
 
 const baseNavItems = [
-  { to: '/', label: 'Dashboard', mobileLabel: 'Start', icon: Gauge },
-  { to: '/rolls', label: 'Rollen', mobileLabel: 'Rollen', icon: Boxes },
-  { to: '/usage', label: 'Verbrauch', mobileLabel: 'Gramm', icon: Scale },
-  { to: '/costs', label: 'Kosten', mobileLabel: 'Kosten', icon: ReceiptText },
-  { to: '/printers', label: 'Drucker', mobileLabel: 'Drucker', icon: Printer },
-  { to: '/calculator', label: 'Kalkulator', mobileLabel: 'Preis', icon: Calculator },
-  { to: '/activity', label: 'Aktivitäten', mobileLabel: 'Log', icon: Activity }
+  { to: '/', label: 'Dashboard', mobileLabel: 'Start', icon: Gauge, tone: 'var(--accent)' },
+  { to: '/rolls', label: 'Rollen', mobileLabel: 'Rollen', icon: Boxes, tone: 'var(--blue)' },
+  { to: '/usage', label: 'Verbrauch', mobileLabel: 'Gramm', icon: Scale, tone: 'var(--warning)' },
+  { to: '/costs', label: 'Kosten', mobileLabel: 'Kosten', icon: ReceiptText, tone: 'var(--mat-pla)' },
+  { to: '/printers', label: 'Drucker', mobileLabel: 'Drucker', icon: Printer, tone: 'var(--mat-abs)' },
+  { to: '/calculator', label: 'Kalkulator', mobileLabel: 'Preis', icon: Calculator, tone: 'var(--danger)' },
+  { to: '/activity', label: 'Aktivitäten', mobileLabel: 'Log', icon: Activity, tone: 'var(--accent-strong)' }
 ];
 
-const adminNavItem = { to: '/admin', label: 'Admin', mobileLabel: 'Admin', icon: ShieldCheck };
+const adminNavItem = {
+  to: '/admin',
+  label: 'Admin',
+  mobileLabel: 'Admin',
+  icon: ShieldCheck,
+  tone: 'var(--mat-tpu)'
+};
+
+function isActivePath(pathname: string, to: string) {
+  if (to === '/') return pathname === '/';
+  return pathname === to || pathname.startsWith(`${to}/`);
+}
 
 function roleLabel(profile: Profile | null) {
   return profile?.role === 'admin' ? 'Admin' : 'Mitglied';
@@ -57,6 +68,8 @@ function buildMobileNavItems(profile: Profile | null) {
 export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onSignOut }: AppShellProps) {
   const navItems = buildNavItems(profile);
   const mobileNavItems = buildMobileNavItems(profile);
+  const location = useLocation();
+  const activeIndex = navItems.findIndex((item) => isActivePath(location.pathname, item.to));
 
   return (
     <div className="app-shell">
@@ -72,12 +85,19 @@ export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onS
             const Icon = item.icon;
             return (
               <NavLink key={item.to} to={item.to} end={item.to === '/'} className="nav-link">
-                <Icon size={18} />
+                <span className="nav-icon" style={{ '--tone': item.tone } as CSSProperties}>
+                  <Icon size={18} />
+                </span>
                 <span>{item.label}</span>
                 <i aria-hidden="true" />
               </NavLink>
             );
           })}
+          <div
+            className={`nav-active-indicator${activeIndex >= 0 ? ' is-visible' : ''}`}
+            style={{ transform: `translateY(${Math.max(activeIndex, 0) * 56}px)` }}
+            aria-hidden="true"
+          />
         </nav>
         <div className="sidebar-footer">
           <div className="profile-chip">
