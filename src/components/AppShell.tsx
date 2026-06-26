@@ -137,7 +137,9 @@ export function AppShell({ children, profile, isDemo, onAddRoll, onAddUsage, onS
             const Icon = item.icon;
             return (
               <NavLink key={item.to} to={item.to} end={item.to === '/'} className="mobile-nav-link">
-                <Icon size={18} />
+                <span className="nav-icon" style={{ '--tone': item.tone } as CSSProperties}>
+                  <Icon size={18} />
+                </span>
                 <span>{item.mobileLabel}</span>
                 <i aria-hidden="true" />
               </NavLink>

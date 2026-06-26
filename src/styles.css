@@ -478,7 +478,8 @@ button:disabled {
 }
 
 .nav-link:hover .nav-icon,
-.nav-link.active .nav-icon {
+.nav-link.active .nav-icon,
+.mobile-nav-link.active .nav-icon {
   background: rgba(255, 255, 255, 0.22);
   color: #fff;
 }
@@ -588,8 +589,7 @@ button:disabled {
   outline-offset: 2px;
 }
 
-.mobile-nav-link.active::before,
-.mobile-nav-link:hover::before {
+.mobile-nav-link.active::before {
   opacity: 1;
   scale: 1;
 }
@@ -4270,6 +4270,17 @@ input[type='range'] {
     line-height: 1;
     background: rgba(255, 255, 255, 0.02);
     animation: vault-dock-in 560ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+
+  .mobile-nav-link .nav-icon {
+    width: 25px;
+    height: 25px;
+    border-radius: 8px;
+  }
+
+  .mobile-nav-link:hover {
+    background: rgba(226, 100, 28, 0.1);
+    transform: translateY(-2px);
   }
 
   .mobile-nav-link:nth-child(1) {
