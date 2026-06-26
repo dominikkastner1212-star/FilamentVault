@@ -2094,7 +2094,7 @@ label {
   --donut: var(--line) 0 100%;
   --ring-size: 156px;
   --ring-thickness: 18px;
-  --ring-track: rgba(43, 29, 18, 0.08);
+  --ring-track: rgba(43, 29, 18, 0.16);
   position: relative;
   z-index: 1;
   isolation: isolate;
@@ -2105,23 +2105,12 @@ label {
   align-items: center;
   justify-content: center;
   gap: 5px;
+  border: 2px solid var(--line-strong);
   border-radius: 50%;
-  background: radial-gradient(circle at 50% 47%, rgba(255, 255, 255, 0.94), rgba(251, 240, 224, 0.76) 62%, rgba(255, 255, 255, 0.56));
+  background: radial-gradient(circle at 50% 47%, rgba(255, 255, 255, 0.96), rgba(251, 240, 224, 0.82) 62%, rgba(255, 255, 255, 0.62));
   box-shadow:
     inset 0 0 0 1px rgba(255, 255, 255, 0.78),
-    0 22px 54px rgba(38, 25, 15, 0.12);
-}
-
-.material-donut::before {
-  content: '';
-  position: absolute;
-  inset: -16px;
-  z-index: -1;
-  border-radius: 50%;
-  background: conic-gradient(var(--donut));
-  filter: blur(22px);
-  opacity: 0.55;
-  animation: vault-glow 6s ease-in-out infinite;
+    var(--shadow-soft);
 }
 
 .material-donut::after,
