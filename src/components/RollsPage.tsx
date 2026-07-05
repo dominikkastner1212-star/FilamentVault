@@ -271,6 +271,7 @@ export function RollsPage({
           <article
             className="roll-card compact-roll-card"
             key={roll.id}
+            data-ref={roll.id.slice(0, 8).toUpperCase()}
             style={filamentStyleVars(roll.color) as CSSProperties}
           >
             <div className="roll-card-head">
