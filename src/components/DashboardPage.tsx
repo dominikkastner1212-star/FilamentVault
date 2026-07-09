@@ -1,4 +1,4 @@
-import { Activity, AlertTriangle, Boxes, ReceiptText, Scale, TrendingUp } from 'lucide-react';
+import { Activity, TrendingUp } from 'lucide-react';
 import type { CSSProperties } from 'react';
 import { buildSettlementRows, lowStockRolls, materialStock, totalStock, usageCost } from '../lib/analytics';
 import { filamentStyleVars } from '../lib/filamentColor';
@@ -12,31 +12,6 @@ type DashboardPageProps = {
   activity: ActivityLog[];
   onAddUsage: (rollId?: string) => void;
 };
-
-function StatCard({
-  label,
-  value,
-  detail,
-  icon: Icon
-}: {
-  label: string;
-  value: string;
-  detail: string;
-  icon: typeof Boxes;
-}) {
-  return (
-    <article className="stat-card">
-      <div className="stat-icon">
-        <Icon size={20} />
-      </div>
-      <div>
-        <span>{label}</span>
-        <strong>{value}</strong>
-        <p>{detail}</p>
-      </div>
-    </article>
-  );
-}
 
 function actionLabel(action: string) {
   if (action === 'profile_created') {
@@ -78,44 +53,61 @@ export function DashboardPage({ profiles, rolls, usage, activity, onAddUsage }: 
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
   const usage30 = usage.filter((entry) => new Date(entry.used_at) >= thirtyDaysAgo);
   const usage30Weight = usage30.reduce((sum, entry) => sum + entry.used_weight_g, 0);
-  const materialGradient = materialRows
-    .filter((row) => row.weight > 0)
-    .map((row, index, rows) => {
-      const start = rows.slice(0, index).reduce((sum, item) => sum + (item.weight / stock) * 100, 0);
-      const end = start + (row.weight / stock) * 100;
-      return `var(--mat-${row.material.toLowerCase().replace('+', 'plus')}) ${start}% ${end}%`;
-    })
-    .join(', ');
+  const gaugeRows = materialRows.filter((row) => row.weight > 0);
+  const materialVar = (material: string) => `var(--mat-${material.toLowerCase().replace('+', 'plus')})`;
   const settlementLead = settlement[0];
 
   return (
     <div className="page-grid dashboard-cockpit">
       <section className="cockpit-hero span-12">
-        <div>
-          <span className="eyebrow">Live Vault</span>
-          <h2>{formatKg(stock)} im gemeinsamen Bestand</h2>
-          <p>{activeRolls} aktive Rollen, {low.length} kritisch, {formatGrams(usage30Weight)} Verbrauch in 30 Tagen.</p>
-        </div>
-        <div
-          className="material-donut"
-          style={{ '--donut': materialGradient || 'var(--line) 0 100%' } as CSSProperties}
-          aria-label="Materialverteilung"
-        >
+        <span className="eyebrow">Live Vault</span>
+        <div className="hero-figure">
           <strong>{formatKg(stock)}</strong>
-          <span>gesamt</span>
+          <span>gemeinsamer Bestand</span>
         </div>
+        {gaugeRows.length > 0 ? (
+          <div
+            className="material-gauge"
+            role="img"
+            aria-label={`Materialverteilung: ${gaugeRows.map((row) => `${row.material} ${formatKg(row.weight)}`).join(', ')}`}
+          >
+            {gaugeRows.map((row) => (
+              <i
+                key={row.material}
+                style={{ flexGrow: row.weight, '--seg': materialVar(row.material) } as CSSProperties}
+              />
+            ))}
+          </div>
+        ) : null}
+        <div className="gauge-legend">
+          {gaugeRows.map((row) => (
+            <span key={row.material}>
+              <i style={{ background: materialVar(row.material) } as CSSProperties} aria-hidden="true" />
+              {row.material} {formatKg(row.weight)}
+            </span>
+          ))}
+        </div>
+        <p>
+          {activeRolls} aktive Rollen · {low.length} kritisch · {formatGrams(usage30Weight)} in 30 Tagen
+        </p>
       </section>
 
-      <section className="stats-grid">
-        <StatCard label="Gesamtbestand" value={formatKg(stock)} detail={`${activeRolls} aktive Rollen`} icon={Boxes} />
-        <StatCard
-          label="Niedriger Bestand"
-          value={String(low.length)}
-          detail="unter 150 g Restgewicht"
-          icon={AlertTriangle}
-        />
-        <StatCard label="Verbrauch" value={formatGrams(totalUsage)} detail={`${usage.length} Einträge`} icon={Scale} />
-        <StatCard label="Ausgaben" value={formatCurrency(totalSpend)} detail={`${formatCurrency(openBalance)} offen`} icon={ReceiptText} />
+      <section className="vital-strip span-12">
+        <div>
+          <span>Niedrig</span>
+          <strong className={low.length === 0 ? 'is-ok' : 'is-warn'}>{low.length}</strong>
+          <small>unter 150 g</small>
+        </div>
+        <div>
+          <span>Verbrauch</span>
+          <strong>{formatGrams(totalUsage)}</strong>
+          <small>{usage.length} {usage.length === 1 ? 'Eintrag' : 'Einträge'}</small>
+        </div>
+        <div>
+          <span>Ausgaben</span>
+          <strong>{formatCurrency(totalSpend)}</strong>
+          <small className={openBalance > 0 ? 'is-warn' : ''}>{formatCurrency(openBalance)} offen</small>
+        </div>
       </section>
 
       <section className="panel span-7">
