@@ -237,8 +237,8 @@ p { margin: 0; }
   display: grid;
   place-items: center;
   border-radius: 7px;
-  color: var(--tone, var(--ink-soft));
-  background: color-mix(in srgb, var(--tone, var(--ink-soft)) 14%, transparent);
+  color: var(--ink-soft);
+  background: rgba(255, 255, 255, 0.05);
   flex-shrink: 0;
 }
 
@@ -305,7 +305,17 @@ p { margin: 0; }
   }
   .mobile-nav-link.active { color: var(--ink); background: var(--surface-sunken); }
   .mobile-nav-link i { display: none; }
-  .content { padding-bottom: calc(90px + env(safe-area-inset-bottom)); padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); }
+  .content {
+    padding-bottom: calc(104px + env(safe-area-inset-bottom));
+    padding-left: calc(14px + env(safe-area-inset-left));
+    padding-right: calc(14px + env(safe-area-inset-right));
+  }
+  /* Hero kompakt: Text links, kleinerer Donut rechts - keine Leerflaeche */
+  .cockpit-hero { flex-wrap: nowrap; gap: 14px; }
+  .cockpit-hero > div:first-child { flex: 1; min-width: 0; }
+  .cockpit-hero h2 { font-size: 20px; line-height: 1.25; }
+  .material-donut { --size: 104px; }
+  .mobile-nav-link { min-width: 52px; }
   .topbar { padding: calc(14px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 12px calc(14px + env(safe-area-inset-left)); }
 }
 
@@ -322,8 +332,12 @@ p { margin: 0; }
 }
 .primary-button:active, .secondary-button:active, .ghost-button:active { transform: scale(0.97); }
 
-.primary-button { background: var(--ink); color: var(--bg); }
-.primary-button:hover { background: var(--accent-strong); }
+.primary-button {
+  background: linear-gradient(180deg, var(--accent), var(--accent-strong));
+  color: var(--accent-ink);
+  box-shadow: 0 6px 18px var(--accent-glow), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+.primary-button:hover { filter: brightness(1.08); }
 
 .secondary-button { background: var(--surface); border-color: var(--line-strong); color: var(--ink); }
 .secondary-button:hover { background: var(--surface-sunken); }
@@ -1115,4 +1129,13 @@ input[type='date'], input[type='month'] { color-scheme: dark; }
 @media print {
   :root { color-scheme: light; }
   body { background: #fff !important; color: #000; }
+}
+
+
+/* Nav-Icons: neutral in Ruhe, Duesen-Glut wenn aktiv */
+.nav-link.active .nav-icon,
+.nav-link[aria-current='page'] .nav-icon,
+.mobile-nav-link.active .nav-icon {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
 }
