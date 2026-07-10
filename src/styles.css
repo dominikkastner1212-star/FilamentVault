@@ -406,7 +406,11 @@ p { margin: 0; }
 .material-dot[data-material='ABS'] { background: var(--mat-abs); }
 
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-grid > label { min-width: 0; }
 .form-grid-full { grid-column: 1 / -1; }
+@media (max-width: 640px) {
+  .form-grid { grid-template-columns: 1fr; }
+}
 .stacked-form { display: flex; flex-direction: column; gap: 12px; }
 .form-grid label, .stacked-form label { display: flex; flex-direction: column; gap: 6px; font-size: 12.5px; font-weight: 600; color: var(--ink-soft); }
 .form-grid input, .form-grid select, .form-grid textarea,
@@ -422,7 +426,45 @@ p { margin: 0; }
 }
 .form-summary { font-family: var(--font-mono); font-size: 12px; color: var(--ink-soft); }
 .form-gauge { height: 8px; border-radius: 999px; background: var(--line); overflow: hidden; }
-.range-label { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); }
+.range-label { display: flex; flex-wrap: wrap; justify-content: space-between; font-family: var(--font-mono); font-size: 11px; color: var(--ink-soft); }
+.range-label input[type='range'] { flex-basis: 100%; order: 3; }
+
+/* Regler auf das Nachtschicht-Theme umstellen - der native Browser-Regler
+   war blau und passte nicht zum Rest des dunklen, amber-akzentuierten
+   Designs. */
+input[type='range'] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line-strong);
+  accent-color: var(--accent);
+}
+input[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow), 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+  margin-top: -7px;
+}
+input[type='range']::-moz-range-track {
+  height: 4px;
+  border-radius: 999px;
+  background: var(--line-strong);
+}
+input[type='range']::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border: none;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 0 4px var(--accent-glow), 0 2px 6px rgba(0, 0, 0, 0.4);
+  cursor: pointer;
+}
 
 /* ---------------------------------------------------------------------- */
 /* Panels / cards (shared primitive)                                     */
@@ -945,6 +987,10 @@ p { margin: 0; }
 .result-panel { position: sticky; top: 16px; }
 .result-stack { display: flex; flex-direction: column; gap: 10px; }
 .result-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px; }
+.result-grid > div { min-width: 0; }
+@media (max-width: 420px) {
+  .result-grid { grid-template-columns: 1fr; }
+}
 .result-grid > div { background: var(--surface-sunken); border-radius: 8px; padding: 10px 12px; }
 .result-grid span { display: block; font-family: var(--font-mono); font-size: 10px; color: var(--ink-soft); text-transform: uppercase; }
 .result-grid strong { display: block; font-family: var(--font-mono); font-size: 15px; font-weight: 700; margin-top: 4px; }
