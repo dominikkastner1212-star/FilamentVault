@@ -58,3 +58,32 @@ export function lowStockRolls(rolls: FilamentRoll[]) {
 export function totalStock(rolls: FilamentRoll[]) {
   return rolls.filter((roll) => roll.status !== 'leer').reduce((sum, roll) => sum + roll.remaining_weight_g, 0);
 }
+
+export type LeaderboardRow = {
+  profile: Profile;
+  weightG: number;
+  prints: number;
+};
+
+/**
+ * Team-Rangliste der letzten X Tage - wer hat wie viel gedruckt.
+ * Nur Profile mit mindestens einem Eintrag im Zeitraum werden gezeigt,
+ * damit die Liste nicht mit inaktiven Mitgliedern zugemuellt wird.
+ */
+export function buildUsageLeaderboard(profiles: Profile[], usage: FilamentUsage[], days = 30): LeaderboardRow[] {
+  const since = new Date();
+  since.setDate(since.getDate() - days);
+  const recent = usage.filter((entry) => new Date(entry.used_at) >= since);
+
+  return profiles
+    .map((profile) => {
+      const mine = recent.filter((entry) => entry.user_id === profile.id);
+      return {
+        profile,
+        weightG: mine.reduce((sum, entry) => sum + entry.used_weight_g, 0),
+        prints: mine.length
+      };
+    })
+    .filter((row) => row.prints > 0)
+    .sort((a, b) => b.weightG - a.weightG);
+}

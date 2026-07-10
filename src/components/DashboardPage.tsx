@@ -1,6 +1,6 @@
-import { Activity, TrendingUp } from 'lucide-react';
+import { Activity, Trophy, TrendingUp } from 'lucide-react';
 import type { CSSProperties } from 'react';
-import { buildSettlementRows, lowStockRolls, materialStock, totalStock, usageCost } from '../lib/analytics';
+import { buildSettlementRows, buildUsageLeaderboard, lowStockRolls, materialStock, totalStock, usageCost } from '../lib/analytics';
 import { filamentStyleVars } from '../lib/filamentColor';
 import { displayName, formatCurrency, formatDateTime, formatGrams, formatKg } from '../lib/format';
 import { ActivityLog, FilamentRoll, FilamentUsage, Profile } from '../types';
@@ -56,6 +56,9 @@ export function DashboardPage({ profiles, rolls, usage, activity, onAddUsage }: 
   const gaugeRows = materialRows.filter((row) => row.weight > 0);
   const materialVar = (material: string) => `var(--mat-${material.toLowerCase().replace('+', 'plus')})`;
   const settlementLead = settlement[0];
+  const leaderboard = buildUsageLeaderboard(profiles, usage, 30);
+  const leaderboardMax = Math.max(...leaderboard.map((row) => row.weightG), 1);
+  const medals = ['🥇', '🥈', '🥉'];
 
   return (
     <div className="page-grid dashboard-cockpit">
@@ -109,6 +112,33 @@ export function DashboardPage({ profiles, rolls, usage, activity, onAddUsage }: 
           <small className={openBalance > 0 ? 'is-warn' : ''}>{formatCurrency(openBalance)} offen</small>
         </div>
       </section>
+
+      {leaderboard.length > 0 ? (
+        <section className="panel span-12 leaderboard-panel">
+          <div className="panel-header">
+            <div>
+              <h2>Team-Rangliste</h2>
+              <p>Wer hat in den letzten 30 Tagen am meisten gedruckt.</p>
+            </div>
+            <Trophy size={18} />
+          </div>
+          <div className="leaderboard-list">
+            {leaderboard.slice(0, 5).map((row, index) => (
+              <div className="leaderboard-row" key={row.profile.id}>
+                <span className="leaderboard-rank">{medals[index] ?? index + 1}</span>
+                <div>
+                  <strong>{displayName(row.profile)}</strong>
+                  <small>{row.prints} {row.prints === 1 ? 'Druck' : 'Drucke'}</small>
+                </div>
+                <div className="bar-track" aria-hidden="true">
+                  <span style={{ width: `${Math.max(4, (row.weightG / leaderboardMax) * 100)}%` }} />
+                </div>
+                <em>{formatKg(row.weightG / 1000)}</em>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
 
       <section className="panel span-7">
         <div className="panel-header">

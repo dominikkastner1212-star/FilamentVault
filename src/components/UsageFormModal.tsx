@@ -1,11 +1,13 @@
 import { FormEvent, useMemo, useState } from 'react';
 import { Bolt, Save } from 'lucide-react';
 import { Modal } from './Modal';
-import { FilamentRoll, UsageFormValues } from '../types';
+import { FilamentRoll, FilamentUsage, UsageFormValues } from '../types';
 import { formatCurrency, formatGrams } from '../lib/format';
 
 type UsageFormModalProps = {
   rolls: FilamentRoll[];
+  usage: FilamentUsage[];
+  currentUserId?: string | null;
   selectedRollId?: string | null;
   onClose: () => void;
   onSubmit: (values: UsageFormValues) => Promise<void>;
@@ -14,10 +16,24 @@ type UsageFormModalProps = {
 const today = new Date().toISOString().slice(0, 10);
 const presets = [25, 50, 100, 150];
 
-export function UsageFormModal({ rolls, selectedRollId, onClose, onSubmit }: UsageFormModalProps) {
+/**
+ * Letzte von diesem Nutzer verwendete Rolle, damit die Rollen-Auswahl
+ * beim naechsten Druck nicht wieder von vorne beginnt - man druckt eine
+ * Serie meistens mit derselben Rolle weiter.
+ */
+function lastUsedRollId(usage: FilamentUsage[], userId: string | null | undefined, activeRolls: FilamentRoll[]) {
+  if (!userId) return null;
+  const lastEntry = usage
+    .filter((entry) => entry.user_id === userId)
+    .sort((a, b) => new Date(b.used_at).getTime() - new Date(a.used_at).getTime())[0];
+  if (!lastEntry) return null;
+  return activeRolls.some((roll) => roll.id === lastEntry.roll_id) ? lastEntry.roll_id : null;
+}
+
+export function UsageFormModal({ rolls, usage, currentUserId, selectedRollId, onClose, onSubmit }: UsageFormModalProps) {
   const activeRolls = rolls.filter((roll) => roll.status !== 'leer');
   const [values, setValues] = useState<UsageFormValues>({
-    roll_id: selectedRollId || activeRolls[0]?.id || '',
+    roll_id: selectedRollId || lastUsedRollId(usage, currentUserId, activeRolls) || activeRolls[0]?.id || '',
     project_name: '',
     used_weight_g: 50,
     used_at: today,
