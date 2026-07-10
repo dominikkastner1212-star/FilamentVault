@@ -89,7 +89,12 @@ html { background: var(--bg); }
 /* Sicherheitsnetz: Die Seite darf als Ganzes nie seitwaerts verrutschen -
    breite Inhalte (z. B. Tabellen) muessen selbst horizontal scrollen,
    nicht den kompletten Viewport verschieben. */
-html, body { overflow-x: hidden; }
+/* overflow-x: clip statt hidden - erreicht denselben Schutz (Seite darf
+   nie horizontal wegrutschen), aber "hidden" auf html/body ist auf iOS
+   Safari dafuer bekannt, fixierte Elemente (unsere Navbar!) aus ihrer
+   eigenen Compositor-Ebene zu werfen und bei jeder Beruehrung neu zu
+   zeichnen - genau das fuehlte sich ruckelig/traege an. */
+html, body { overflow-x: clip; }
 
 body {
   margin: 0;
