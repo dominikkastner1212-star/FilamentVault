@@ -15,12 +15,14 @@ import { UsageFormModal } from './components/UsageFormModal';
 import { UsagePage } from './components/UsagePage';
 import { useAuth } from './hooks/useAuth';
 import { useFilamentVault } from './hooks/useFilamentVault';
+import { computeMomentum } from './lib/motivation';
 import { FilamentRoll, RollFormValues, UsageFormValues } from './types';
 
 type Toast = {
   id: string;
   title: string;
   detail: string;
+  variant?: 'default' | 'celebration';
 };
 
 function LoadingScreen() {
@@ -74,12 +76,12 @@ export default function App() {
     setUsageRollId(rollId || '');
   }
 
-  function showToast(title: string, detail: string) {
+  function showToast(title: string, detail: string, variant: Toast['variant'] = 'default') {
     const id = crypto.randomUUID();
-    setToasts((items) => [...items.slice(-2), { id, title, detail }]);
+    setToasts((items) => [...items.slice(-2), { id, title, detail, variant }]);
     window.setTimeout(() => {
       setToasts((items) => items.filter((item) => item.id !== id));
-    }, 4200);
+    }, variant === 'celebration' ? 5400 : 4200);
   }
 
   async function submitRoll(values: RollFormValues) {
@@ -94,9 +96,24 @@ export default function App() {
   }
 
   async function submitUsage(values: UsageFormValues) {
-    const roll = vault.rolls.find((item) => item.id === values.roll_id);
+    // Momentum wird VOR dem Speichern anhand des bekannten Verlaufs
+    // berechnet (nicht danach), damit das Ergebnis nicht vom Timing
+    // des State-Refresh abhaengt.
+    const momentum = currentProfile
+      ? computeMomentum(vault.usage, currentProfile.id, {
+          used_at: values.used_at,
+          used_weight_g: values.used_weight_g
+        })
+      : null;
+
     await vault.addUsage(values);
-    showToast('Verbrauch gebucht', `${values.used_weight_g} g${roll ? ` von ${roll.manufacturer}` : ''} abgezogen.`);
+
+    if (momentum) {
+      showToast(momentum.headline, momentum.detail, momentum.celebrate ? 'celebration' : 'default');
+    } else {
+      const roll = vault.rolls.find((item) => item.id === values.roll_id);
+      showToast('Verbrauch gebucht', `${values.used_weight_g} g${roll ? ` von ${roll.manufacturer}` : ''} abgezogen.`);
+    }
   }
 
   async function deleteRoll(roll: FilamentRoll) {
@@ -220,6 +237,8 @@ export default function App() {
       {usageRollId !== null ? (
         <UsageFormModal
           rolls={vault.rolls}
+          usage={vault.usage}
+          currentUserId={currentProfile?.id ?? null}
           selectedRollId={usageRollId || null}
           onClose={() => setUsageRollId(null)}
           onSubmit={submitUsage}
@@ -229,7 +248,7 @@ export default function App() {
       {toasts.length ? (
         <div className="toast-stack" aria-live="polite" aria-label="Benachrichtigungen">
           {toasts.map((toast) => (
-            <div className="toast-card" key={toast.id}>
+            <div className={toast.variant === 'celebration' ? 'toast-card celebration' : 'toast-card'} key={toast.id}>
               <strong>{toast.title}</strong>
               <span>{toast.detail}</span>
             </div>
