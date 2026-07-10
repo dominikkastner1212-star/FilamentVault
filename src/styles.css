@@ -10,6 +10,7 @@
 
 :root {
   color-scheme: dark;
+
   font-family: 'Space Grotesk', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -81,6 +82,11 @@
 * { box-sizing: border-box; }
 svg { stroke-width: 2; }
 html { background: var(--bg); }
+
+/* Sicherheitsnetz: Die Seite darf als Ganzes nie seitwaerts verrutschen -
+   breite Inhalte (z. B. Tabellen) muessen selbst horizontal scrollen,
+   nicht den kompletten Viewport verschieben. */
+html, body { overflow-x: hidden; }
 
 body {
   margin: 0;
@@ -431,6 +437,13 @@ p { margin: 0; }
   padding: 18px;
   animation: rise-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
+.table-panel { padding: 0; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-panel .data-table { min-width: 560px; }
+.table-panel .data-table th:first-child, .table-panel .data-table td:first-child { padding-left: 18px; }
+.table-panel .data-table th:last-child, .table-panel .data-table td:last-child { padding-right: 18px; }
+.table-panel .data-table thead th { padding-top: 14px; }
+.table-panel .data-table tbody tr:last-child td { padding-bottom: 14px; }
+.table-panel .empty-state { padding: 18px; }
 
 .panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .panel-header h2, .panel-header h3 { font-size: 15.5px; font-weight: 700; }
@@ -996,6 +1009,8 @@ p { margin: 0; }
 .data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .data-table th { text-align: left; font-family: var(--font-mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); padding: 8px 10px; border-bottom: 1.5px solid var(--line-strong); }
 .data-table td { padding: 10px; border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.data-table td strong { display: block; font-family: var(--font-ui); font-variant-numeric: normal; }
+.data-table td small { display: block; font-size: 11px; color: var(--ink-soft); margin-top: 2px; font-family: var(--font-mono); }
 .data-table tbody tr:hover td { background: var(--surface-sunken); }
 
 /* ---------------------------------------------------------------------- */
